@@ -29,7 +29,7 @@ Layers call downward only: **routes → controllers → services → repositorie
 | `src/shared/` | `errors/`, `utils/`, `db/`, `cache/`, `logger.js` – reusable, no module internals |
 | `src/modules/<name>/` | 15 feature modules, identical shape (below) |
 | `src/jobs/` | email, image, CDN purge, sitemap queues and jobs |
-| `src/locales/{en,sw}/` | i18next JSON |
+| `src/locales/en/` | i18next JSON |
 | `src/views/` | `layouts/`, `partials/`, `pages/`, `admin/`, `errors/` |
 | `public/` | Tailwind output, browser JS modules, images |
 | `styles/` | Tailwind input + component CSS |
@@ -133,7 +133,7 @@ Layout and homepage order follow Suricata Safaris (hero, why-us, top packages, s
 
 Run: `npm run build:css`, then `PORT=3100 node src/server.js`.
 
-| Path (prefix `/en` or `/sw`) | Page |
+| Path (prefix `/en`) | Page |
 |---|---|
 | `/` | Home |
 | `/safaris` `/kilimanjaro` `/day-trips` `/zanzibar` | Category lists (filters: style, duration, max price, sort) |
@@ -147,4 +147,4 @@ Run: `npm run build:css`, then `PORT=3100 node src/server.js`.
 | `/about` `/reviews` `/faqs` `/travel-guide` `/search?q=` `/terms` `/privacy` | Info pages |
 | `/sitemap.xml` `/robots.txt` `/healthz` | System |
 
-**Interim state:** content comes from `src/data/*` (sample data, not the database). Form submissions append to `var/submissions.jsonl`. Not yet built: CSRF, Turnstile, rate limits, email queue, admin, Swahili content (nav only), per-page SEO meta/JSON-LD. Placeholders to replace: prices, package copy, lodge names, reviews, phone/email, terms and privacy text.
+**Interim state:** content comes from `src/data/*` (sample data, not the database). Form submissions append to `var/submissions.jsonl`. Not yet built: CSRF, Turnstile, rate limits, email queue, admin, per-page SEO meta/JSON-LD. Placeholders to replace: prices, package copy, lodge names, reviews, phone/email, terms and privacy text.

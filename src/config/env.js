@@ -11,7 +11,7 @@ const schema = z.object({
   ADMIN_EMAIL: z.string().email().optional(),
   ADMIN_PASSWORD: z.string().min(12).optional(),
   DEFAULT_LANG: z.string().default('en'),
-  SUPPORTED_LANGS: z.string().default('en,sw'),
+  SUPPORTED_LANGS: z.string().default('en'),
 });
 
 export const env = schema.parse(process.env);

@@ -2,8 +2,7 @@
   <div class="container-x flex items-center justify-between py-2">
     <p class="hidden sm:block">Tailor-made trips in Tanzania · <a class="hover:text-sand" href="tel:{{ site.phone }}">{{ site.phone }}</a> · <a class="hover:text-sand" href="mailto:{{ site.email }}">{{ site.email }}</a></p>
     <p class="flex gap-3 ml-auto">
-      {% for l in langs %}<a href="/{{ l }}{{ path if path != '/' else '' }}" class="{{ 'font-bold text-sand' if l == lang else 'hover:text-sand' }} uppercase">{{ l }}</a>{% endfor %}
-      <span class="text-stone-500">|</span><span>USD</span>
+      {% if langs | length > 1 %}{% for l in langs %}<a href="/{{ l }}{{ path if path != '/' else '' }}" class="{{ 'font-bold text-sand' if l == lang else 'hover:text-sand' }} uppercase">{{ l }}</a>{% endfor %}<span class="text-stone-500">|</span>{% endif %}<span>USD</span>
     </p>
   </div>
 </div>

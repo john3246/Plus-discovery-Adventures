@@ -4,7 +4,7 @@ import { unsplash } from '../data/images.js';
 import { site, mainNav } from '../data/site.js';
 
 const locales = {};
-for (const l of ['en', 'sw']) {
+for (const l of ['en']) {
   locales[l] = JSON.parse(readFileSync(new URL(`../locales/${l}/common.json`, import.meta.url), 'utf8'));
 }
 
