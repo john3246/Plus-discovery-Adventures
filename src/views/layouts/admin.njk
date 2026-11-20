@@ -3,13 +3,51 @@
 <head>
   <meta charset="utf-8"><meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Admin{% endblock %} · Plus Discovery Adventure</title>
+  <title>{% block title %}Admin{% endblock %} · {{ site.fullName or 'Plus Discovery Adventure' }}</title>
+  <link rel="icon" href="/img/logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap">
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="bg-stone-100">
-  <div class="flex min-h-screen">
-    <aside class="w-60 bg-stone-900 text-stone-100 p-4">{# sidebar rendered by permission #}</aside>
-    <main class="flex-1 p-6">{% include "partials/flash.njk" %}{% block content %}{% endblock %}</main>
+{% set nav = [
+  ['Dashboard', '/admin', 'dashboard:read', ''],
+  ['Tours', '/admin/tours', 'tours:read', 'Content'],
+  ['Destinations', '/admin/destinations', 'destinations:read', ''],
+  ['Accommodation', '/admin/accommodations', 'accommodations:read', ''],
+  ['Blog posts', '/admin/posts', 'posts:read', ''],
+  ['Bookings', '/admin/bookings', 'bookings:read', 'Sales'],
+  ['Enquiries', '/admin/enquiries', 'enquiries:read', ''],
+  ['Reviews', '/admin/reviews', 'reviews:read', ''],
+  ['Users', '/admin/users', 'users:read', 'System'],
+  ['Settings', '/admin/settings', 'settings:read', ''],
+  ['Audit log', '/admin/audit-log', 'audit:read', ''] ] %}
+<div class="flex min-h-screen flex-col lg:flex-row">
+  <aside class="bg-ink text-stone-200 lg:w-60 lg:shrink-0">
+    <div class="flex items-center justify-between p-4 lg:block">
+      <a href="/admin" class="inline-block rounded bg-white p-1.5"><img src="/img/logo.png" alt="Plus Discovery" class="h-9 w-auto"></a>
+      <button id="admin-nav-toggle" class="rounded border border-white/30 px-3 py-1 text-sm lg:hidden" aria-expanded="false" aria-controls="admin-nav">Menu</button>
+    </div>
+    <nav id="admin-nav" class="hidden px-2 pb-4 lg:block" aria-label="Admin">
+      {% for n in nav %}{% if can(n[2]) %}
+        {% if n[3] %}<p class="mt-4 px-3 text-[11px] font-semibold uppercase tracking-widest text-stone-500">{{ n[3] }}</p>{% endif %}
+        <a href="{{ n[1] }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white/10 {{ 'bg-white/15 font-semibold text-white' if (adminPath == '/' and n[1] == '/admin') or (n[1] != '/admin' and adminPath.startsWith(n[1].slice(6))) }}">{{ n[0] }}</a>
+      {% endif %}{% endfor %}
+      <p class="mt-4 px-3 text-[11px] font-semibold uppercase tracking-widest text-stone-500">Site</p>
+      <a href="/en" target="_blank" rel="noopener" class="block rounded-md px-3 py-2 text-sm hover:bg-white/10">View website ↗</a>
+    </nav>
+  </aside>
+  <div class="min-w-0 flex-1">
+    <header class="flex items-center justify-between border-b bg-white px-6 py-3 text-sm">
+      <span class="font-semibold">{{ user.name }} <span class="ml-2 rounded bg-stone-100 px-2 py-0.5 text-xs font-normal text-stone-600">{{ user.role }}</span></span>
+      <span class="flex items-center gap-4"><a class="hover:text-sand-dark" href="/admin/profile">Profile</a>
+        <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="{{ csrfToken }}"><button class="text-red-700 hover:underline">Sign out</button></form></span>
+    </header>
+    <main class="p-4 sm:p-6">
+      {% if flash %}<p role="status" class="mb-4 rounded-md px-4 py-3 text-sm {{ 'bg-emerald-50 text-emerald-800' if flash.type == 'ok' else 'bg-red-50 text-red-800' }}">{{ flash.text }}</p>{% endif %}
+      {% block content %}{% endblock %}
+    </main>
   </div>
+</div>
+<script type="module" src="/js/admin/shell.js"></script>
 </body>
 </html>

@@ -1,4 +1,12 @@
 {% extends "layouts/admin.njk" %}
+{% from "admin/_macros.njk" import badge %}
+{% block title %}Users{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold">users/list</h1>
+<div class="flex items-center justify-between"><h1 class="text-2xl font-bold">Staff users</h1>{% if can('users:create') %}<a class="btn btn-primary" href="/admin/users/new">Invite user</a>{% endif %}</div>
+<div class="mt-4 overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-black/5"><table class="w-full text-left text-sm">
+  <thead class="bg-stone-50 text-xs uppercase tracking-wide text-stone-500"><tr><th class="px-4 py-3">Name</th><th class="px-4 py-3">Email</th><th class="px-4 py-3">Role</th><th class="px-4 py-3">Last sign-in</th><th class="px-4 py-3">Status</th></tr></thead>
+  <tbody class="divide-y">{% for u in rows %}<tr class="hover:bg-stone-50">
+    <td class="px-4 py-3">{% if can('users:update') %}<a class="font-medium text-sand-dark hover:underline" href="/admin/users/{{ u.id }}/edit">{{ u.full_name }}</a>{% else %}{{ u.full_name }}{% endif %}</td>
+    <td class="px-4 py-3">{{ u.email }}</td><td class="px-4 py-3">{{ u.role }}</td><td class="px-4 py-3">{{ u.last_login_at | date if u.last_login_at else 'Never' }}</td>
+    <td class="px-4 py-3">{{ badge('published' if u.is_active else 'archived') }}</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}

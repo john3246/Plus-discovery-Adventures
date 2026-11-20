@@ -5,10 +5,11 @@ import { dirname, join } from 'node:path';
 import { setupNunjucks } from './config/nunjucks.js';
 import { siteRoutes } from './site/routes.js';
 import { seoFiles } from './site/seoFiles.js';
+import { hasDb, env } from './config/env.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-export function createApp() {
+export async function createApp() {
   const app = express();
   app.disable('x-powered-by');
   setupNunjucks(app, join(root, 'src', 'views'));
@@ -17,6 +18,12 @@ export function createApp() {
   app.get('/healthz', (req, res) => res.json({ ok: true }));
   app.get('/', (req, res) => res.redirect(302, '/en'));
   app.use(seoFiles);
+  if (hasDb) {
+    if (env.NODE_ENV === 'production') app.set('trust proxy', 1);
+    app.set('adminCookie', env.NODE_ENV === 'production' ? '__Host-pda.sid' : 'pda.sid');
+    const { adminRoutes } = await import('./admin/routes.js');
+    app.use('/admin', adminRoutes);
+  }
   app.use('/:lang', siteRoutes);
   app.use((req, res) => res.status(404).render('errors/404.njk', { lang: 'en', path: req.path }));
   app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars

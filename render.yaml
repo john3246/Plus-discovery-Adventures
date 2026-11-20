@@ -1,0 +1,16 @@
+# Render Blueprint: builds the Tailwind CSS during deploy, then starts the web server.
+services:
+  - type: web
+    name: plus-discovery-adventure
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node src/server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: APP_URL
+        sync: false

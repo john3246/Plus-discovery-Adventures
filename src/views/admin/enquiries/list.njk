@@ -1,4 +1,14 @@
 {% extends "layouts/admin.njk" %}
+{% from "admin/_macros.njk" import badge, pager %}
+{% block title %}Enquiries{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold">enquiries/list</h1>
+<h1 class="text-2xl font-bold">Enquiries</h1>
+<form method="get" class="mt-4 flex gap-2"><label class="sr-only" for="status">Status</label><select id="status" name="status" class="field max-w-44"><option value="">All statuses</option>{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s | titleCase }}</option>{% endfor %}</select><button class="btn btn-dark">Filter</button></form>
+<div class="mt-4 overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-black/5"><table class="w-full text-left text-sm">
+  <thead class="bg-stone-50 text-xs uppercase tracking-wide text-stone-500"><tr><th class="px-4 py-3">From</th><th class="px-4 py-3">Type</th><th class="px-4 py-3">Message</th><th class="px-4 py-3">Received</th><th class="px-4 py-3">Status</th></tr></thead>
+  <tbody class="divide-y">{% for e in rows %}<tr class="hover:bg-stone-50">
+    <td class="px-4 py-3"><a class="font-medium text-sand-dark hover:underline" href="/admin/enquiries/{{ e.id }}">{{ e.name }}</a><br><span class="text-xs text-stone-500">{{ e.email }}</span></td>
+    <td class="px-4 py-3">{{ e.kind }}</td><td class="max-w-xs truncate px-4 py-3">{{ e.message }}</td><td class="px-4 py-3">{{ e.created_at | date }}</td><td class="px-4 py-3">{{ badge(e.status) }}</td></tr>
+  {% else %}<tr><td colspan="5" class="px-4 py-8 text-center text-stone-500">No enquiries yet.</td></tr>{% endfor %}</tbody></table></div>
+{{ pager(page, pages, '/admin/enquiries?status=' + status) }}
 {% endblock %}

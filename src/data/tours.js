@@ -13,15 +13,19 @@ const shortName = (n) => n.replace(/ (National Park|Conservation Area|Archipelag
 // SAMPLE ratings/review counts: replace with real figures from reviews once collected.
 const hash = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 
-const t = (slug, title, category, style, days, price, image, stops, summary) => {
+/** Builds the view model for a tour (tags, route labels, sample rating). Used by sample data and the database store. */
+export function buildTour({ slug, title, category, style, days, price, image, stops, summary, rating, reviews, featured = false, id = null, status = 'published' }) {
   const h = hash(slug);
-  const visit = stops.map((s, i) => ({ name: shortName(destinations.find((d) => d.slug === s)?.name ?? s),
+  const visit = stops.map((s, i) => ({ name: shortName(destinations.find((d) => d.slug === s)?.name ?? s.replace(/-/g, ' ')),
     mark: stops.length > 1 && i === 0 ? 'Start' : stops.length > 1 && i === stops.length - 1 ? 'End' : '' }));
-  return { slug, title, category, style, days, price, image, stops, summary, visit,
-    nights: Math.max(days - 1, 0), currency: 'USD', featured: false,
-    rating: (4.7 + (h % 4) / 10).toFixed(1).replace('.0', ''), reviews: 5 + (h % 12),
-    tags: ['Tanzania', style === 'joining' ? 'Group' : 'Private', ...[STYLE_TAG[style]], STAY_TAG[style]] };
-};
+  return { id, slug, title, category, style, days, price, image, stops, summary, visit, status,
+    nights: Math.max(days - 1, 0), currency: 'USD', featured,
+    rating: rating ?? (4.7 + (h % 4) / 10).toFixed(1).replace('.0', ''), reviews: reviews ?? 5 + (h % 12),
+    tags: ['Tanzania', style === 'joining' ? 'Group' : 'Private', STYLE_TAG[style] ?? [style, 'rose'], STAY_TAG[style] ?? 'Lodge'] };
+}
+
+const t = (slug, title, category, style, days, price, image, stops, summary) =>
+  buildTour({ slug, title, category, style, days, price, image, stops, summary });
 
 export const tours = [
   t('1-day-tarangire-day-safari', '1 Day Tarangire Day Safari', 'day-trip', 'joining', 1, 250, IMG.elephantPlains, ['tarangire'], 'A full day among elephants and baobabs, leaving Arusha at sunrise.'),

@@ -1,4 +1,69 @@
 {% extends "layouts/admin.njk" %}
+{% from "admin/_macros.njk" import badge %}
+{% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold">Dashboard</h1>
+<h1 class="text-2xl font-bold">Dashboard</h1>
+
+<div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  {% for k in [
+    [kpi.new_bookings, 'New bookings', '/admin/bookings?status=new', 'bookings:read'],
+    [kpi.new_enquiries, 'New enquiries', '/admin/enquiries?status=new', 'enquiries:read'],
+    [kpi.pending_reviews, 'Reviews to moderate', '/admin/reviews', 'reviews:read'],
+    [kpi.revenue | money, 'Confirmed revenue (est.)', '/admin/bookings', 'bookings:read'] ] %}
+  <a href="{{ k[2] }}" class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5 hover:shadow-md">
+    <p class="font-serif text-3xl font-bold">{{ k[0] }}</p><p class="mt-1 text-sm text-stone-600">{{ k[1] }}</p></a>
+  {% endfor %}
+</div>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5 lg:col-span-2">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Bookings, last 6 months</h2>
+    <div class="mt-4 flex h-44 items-end gap-3" role="img" aria-label="Bookings per month">
+      {% for m in monthly %}<div class="flex flex-1 flex-col items-center justify-end">
+        <span class="text-xs font-semibold">{{ m.n }}</span>
+        <div class="w-full rounded-t bg-sand" style="height: {{ (m.n / maxMonth * 100) | round }}%; min-height: 4px"></div>
+        <span class="mt-1 text-xs text-stone-500">{{ m.label }}</span></div>{% endfor %}
+    </div>
+  </section>
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Bookings by status</h2>
+    <ul class="mt-4 space-y-2 text-sm">{% for s in byStatus %}<li class="flex items-center justify-between">{{ badge(s.status) }}<b>{{ s.n }}</b></li>
+      {% else %}<li class="text-stone-500">No bookings yet.</li>{% endfor %}</ul>
+  </section>
+</div>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-2">
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Recent bookings</h2>
+    <table class="mt-3 w-full text-left text-sm"><tbody class="divide-y">{% for b in recentBookings %}
+      <tr><td class="py-2"><a class="font-medium text-sand-dark hover:underline" href="/admin/bookings/{{ b.id }}">{{ b.reference }}</a><br><span class="text-xs text-stone-500">{{ b.customer_name }} · {{ b.tour or 'No trip' }}</span></td>
+        <td class="py-2 text-right">{{ badge(b.status) }}</td></tr>
+      {% else %}<tr><td class="py-3 text-stone-500">No bookings yet.</td></tr>{% endfor %}</tbody></table>
+  </section>
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Recent enquiries</h2>
+    <table class="mt-3 w-full text-left text-sm"><tbody class="divide-y">{% for e in recentEnquiries %}
+      <tr><td class="py-2"><a class="font-medium text-sand-dark hover:underline" href="/admin/enquiries/{{ e.id }}">{{ e.name }}</a><br><span class="text-xs text-stone-500">{{ e.kind }} · {{ e.created_at | date }}</span></td>
+        <td class="py-2 text-right">{{ badge(e.status) }}</td></tr>
+      {% else %}<tr><td class="py-3 text-stone-500">No enquiries yet.</td></tr>{% endfor %}</tbody></table>
+  </section>
+</div>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Top booked tours</h2>
+    <ol class="mt-3 space-y-2 text-sm">{% for t in topTours %}<li class="flex justify-between gap-3"><span>{{ t.title }}</span><b>{{ t.n }}</b></li>{% else %}<li class="text-stone-500">No data yet.</li>{% endfor %}</ol>
+  </section>
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Live on the website</h2>
+    <dl class="mt-3 grid grid-cols-2 gap-3 text-sm">
+      {% for c in [[content.tours,'Tours'],[content.destinations,'Destinations'],[content.stays,'Stays'],[content.posts,'Posts']] %}<div><dt class="text-stone-500">{{ c[1] }}</dt><dd class="font-serif text-2xl font-bold">{{ c[0] }}</dd></div>{% endfor %}
+    </dl>
+    <p class="mt-3 text-xs text-stone-500">{{ kpi.subscribers }} newsletter subscribers</p>
+  </section>
+  <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+    <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Activity</h2>
+    <ul class="mt-3 space-y-2 text-sm">{% for a in activity %}<li><b>{{ a.full_name or 'System' }}</b> {{ a.action }} {{ a.entity }}<br><span class="text-xs text-stone-500">{{ a.created_at | date }}</span></li>{% else %}<li class="text-stone-500">No activity yet.</li>{% endfor %}</ul>
+  </section>
+</div>
 {% endblock %}

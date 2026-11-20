@@ -1,0 +1,15 @@
+{% extends "layouts/admin.njk" %}
+{% block title %}{{ 'New user' if isNew else 'Edit user' }}{% endblock %}
+{% block content %}
+<nav class="text-sm text-stone-500"><a href="/admin/users" class="hover:underline">Users</a> / {{ 'New' if isNew else 'Edit' }}</nav>
+<h1 class="mt-1 text-2xl font-bold">{{ 'Invite a user' if isNew else u.full_name }}</h1>
+<form method="post" action="{{ '/admin/users' if isNew else '/admin/users/' + u.id }}" class="mt-5 grid max-w-2xl gap-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5 sm:grid-cols-2" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+  <div><label class="label" for="full_name">Full name *</label><input id="full_name" name="full_name" value="{{ u.full_name }}" class="field">{% if errors.full_name %}<p class="error">{{ errors.full_name }}</p>{% endif %}</div>
+  <div><label class="label" for="email">Email *</label><input id="email" name="email" type="email" value="{{ u.email }}" class="field">{% if errors.email %}<p class="error">{{ errors.email }}</p>{% endif %}</div>
+  <div><label class="label" for="role_id">Role *</label><select id="role_id" name="role_id" class="field">{% for r in roles %}<option value="{{ r.id }}" {{ 'selected' if u.role_id == r.id }}>{{ r.name }}: {{ r.description }}</option>{% endfor %}</select>{% if errors.role_id %}<p class="error">{{ errors.role_id }}</p>{% endif %}</div>
+  <div><label class="label" for="password">{{ 'Password *' if isNew else 'New password (leave blank to keep)' }}</label><input id="password" name="password" type="password" autocomplete="new-password" class="field"><p class="mt-1 text-xs text-stone-500">At least 12 characters.</p>{% if errors.password %}<p class="error">{{ errors.password }}</p>{% endif %}</div>
+  <label class="flex items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" name="is_active" {{ 'checked' if u.is_active }}> Account is active</label>{% if errors.is_active %}<p class="error sm:col-span-2">{{ errors.is_active }}</p>{% endif %}
+  <div class="flex gap-3 sm:col-span-2"><button class="btn btn-primary">Save</button><a href="/admin/users" class="btn btn-outline">Cancel</a></div>
+</form>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "layouts/admin.njk" %}
+{% from "admin/_macros.njk" import badge, pager %}
+{% block title %}{{ cfg.label }}{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold">{{ cfg.label }} <span class="text-base font-normal text-stone-500">({{ total }})</span></h1>
+  {% if can(cfg.perm + ':create') %}<a class="btn btn-primary" href="/admin/{{ key }}/new">New {{ cfg.singular | lower }}</a>{% endif %}
+</div>
+<form method="get" class="mt-4 flex flex-wrap gap-2">
+  <label class="sr-only" for="q">Search</label><input id="q" name="q" value="{{ q }}" placeholder="Search" class="field max-w-xs">
+  {% if cfg.hasStatus %}<label class="sr-only" for="status">Status</label>
+  <select id="status" name="status" class="field max-w-40"><option value="">All statuses</option>{% for s in ['draft','review','published','archived'] %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s | titleCase }}</option>{% endfor %}</select>{% endif %}
+  <button class="btn btn-dark">Filter</button>
+</form>
+<div class="mt-4 overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-black/5">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-stone-50 text-xs uppercase tracking-wide text-stone-500"><tr>{% for c in cfg.columns %}<th class="px-4 py-3">{{ c[1] }}</th>{% endfor %}<th class="px-4 py-3 text-right">Actions</th></tr></thead>
+    <tbody class="divide-y">
+      {% for r in rows %}<tr class="hover:bg-stone-50">
+        {% for c in cfg.columns %}<td class="px-4 py-3">
+          {% if c[0] == 'status' %}{{ badge(r.status) }}
+          {% elif c[0] == 'published_at' %}{{ (r.published_at | date) if r.published_at else '—' }}
+          {% elif c[0] == 'price_from' %}{{ r.price_from | money }}
+          {% elif loop.first and can(cfg.perm + ':update') %}<a class="font-medium text-sand-dark hover:underline" href="/admin/{{ key }}/{{ r.id }}/edit">{{ r[c[0]] }}</a>
+          {% else %}{{ r[c[0]] }}{% endif %}</td>{% endfor %}
+        <td class="px-4 py-3 text-right whitespace-nowrap">
+          {% if can(cfg.perm + ':update') %}<a class="mr-3 text-sand-dark hover:underline" href="/admin/{{ key }}/{{ r.id }}/edit">Edit</a>{% endif %}
+          {% if can(cfg.perm + ':delete') %}<form method="post" action="/admin/{{ key }}/{{ r.id }}/delete" data-confirm="Delete this {{ cfg.singular | lower }}?" class="inline"><input type="hidden" name="_csrf" value="{{ csrfToken }}"><button class="text-red-700 hover:underline">Delete</button></form>{% endif %}
+        </td></tr>
+      {% else %}<tr><td colspan="{{ cfg.columns | length + 1 }}" class="px-4 py-8 text-center text-stone-500">Nothing found.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{{ pager(page, pages, '/admin/' + key + '?q=' + (q | urlencode) + '&status=' + status) }}
+{% endblock %}

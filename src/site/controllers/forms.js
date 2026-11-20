@@ -1,8 +1,8 @@
-// Form controllers. Submissions are appended to var/submissions.jsonl until PostgreSQL + the email queue are wired.
+// Form controllers. Submissions go to PostgreSQL (or var/submissions.jsonl without a database).
 import { z } from 'zod';
 import { randomBytes } from 'node:crypto';
-import { appendFile, mkdir } from 'node:fs/promises';
-import { findTour, tours } from '../../data/tours.js';
+import { getSnapshot } from '../store.js';
+import { saveSubmission } from '../saveSubmission.js';
 
 const base = {
   name: z.string().trim().min(2).max(100),
@@ -17,10 +17,7 @@ const planSchema = z.object({ ...base, adults: z.coerce.number().int().min(1).ma
   arrival: z.string().max(20).default(''), interest: z.string().max(40).default(''), duration: z.string().max(20).default('') });
 const bookingSchema = z.object({ ...base, adults: z.coerce.number().int().min(1).max(30), children: z.coerce.number().int().min(0).max(20).default(0), travelDate: z.string().min(8).max(20) });
 
-async function save(type, data) {
-  await mkdir('var', { recursive: true });
-  await appendFile('var/submissions.jsonl', `${JSON.stringify({ type, at: new Date().toISOString(), ...data })}\n`);
-}
+const save = saveSubmission;
 
 const reference = () => `PDA-${randomBytes(3).toString('hex').toUpperCase()}`;
 const fieldErrors = (r) => Object.fromEntries(Object.entries(r.error.flatten().fieldErrors).map(([k, v]) => [k, v[0]]));
@@ -41,20 +38,22 @@ export const contactSubmit = handler(enquirySchema, 'pages/contact.njk', 'enquir
 export const planForm = (req, res) => res.render('pages/plan.njk', { values: { adults: 2, interest: req.query.interest ?? '' }, errors: {}, sent: req.query.sent });
 export const planSubmit = handler(planSchema, 'pages/plan.njk', 'trip-request', (req) => `/${req.params.lang}/plan-your-trip?sent=1`);
 
-export function bookForm(req, res, next) {
-  const tour = findTour(req.params.slug);
+const findTour = async (slug) => (await getSnapshot()).tours.find((t) => t.slug === slug);
+
+export async function bookForm(req, res, next) {
+  const tour = await findTour(req.params.slug);
   if (!tour) return next();
   res.render('pages/booking/form.njk', { tour, values: { adults: 2 }, errors: {} });
 }
 
-export function bookSubmit(req, res, next) {
-  const tour = findTour(req.params.slug);
+export async function bookSubmit(req, res, next) {
+  const tour = await findTour(req.params.slug);
   if (!tour) return next();
   return handler(bookingSchema, 'pages/booking/form.njk', 'booking', (rq, ref) => `/${rq.params.lang}/booking/confirmation/${ref}?tour=${tour.slug}`, () => ({ tour }))(req, res, next);
 }
 
-export function confirmationPage(req, res) {
-  const tour = tours.find((t) => t.slug === req.query.tour);
+export async function confirmationPage(req, res) {
+  const tour = await findTour(String(req.query.tour ?? ''));
   res.render('pages/booking/confirmation.njk', { reference: String(req.params.reference).replace(/[^A-Z0-9-]/gi, '').slice(0, 12), tour });
 }
 

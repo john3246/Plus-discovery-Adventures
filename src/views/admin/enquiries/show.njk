@@ -1,4 +1,23 @@
 {% extends "layouts/admin.njk" %}
+{% from "admin/_macros.njk" import badge %}
+{% block title %}Enquiry from {{ e.name }}{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold">enquiries/show</h1>
+<nav class="text-sm text-stone-500"><a href="/admin/enquiries" class="hover:underline">Enquiries</a> / {{ e.name }}</nav>
+<h1 class="mt-1 text-2xl font-bold">{{ e.name }} {{ badge(e.status) }}</h1>
+<div class="mt-5 grid gap-6 lg:grid-cols-3">
+  <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5 lg:col-span-2">
+    <dl class="grid gap-4 text-sm sm:grid-cols-2">
+      <div><dt class="label">Email</dt><dd><a class="text-sand-dark" href="mailto:{{ e.email }}">{{ e.email }}</a></dd></div><div><dt class="label">Phone</dt><dd>{{ e.phone or '—' }}</dd></div>
+      <div><dt class="label">Country</dt><dd>{{ e.country or '—' }}</dd></div><div><dt class="label">Type</dt><dd>{{ e.kind }}</dd></div>
+      {% for k, v in e.details %}<div><dt class="label">{{ k | titleCase }}</dt><dd>{{ v or '—' }}</dd></div>{% endfor %}
+      <div class="sm:col-span-2"><dt class="label">Message</dt><dd class="whitespace-pre-line">{{ e.message or '—' }}</dd></div>
+    </dl>
+    <a class="btn btn-primary mt-6" href="mailto:{{ e.email }}?subject=Re: your enquiry">Reply by email</a>
+  </section>
+  <form method="post" action="/admin/enquiries/{{ e.id }}" class="space-y-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <div><label class="label" for="status">Status</label><select id="status" name="status" class="field">{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if e.status == s }}>{{ s | titleCase }}</option>{% endfor %}</select></div>
+    {% if can('enquiries:update') %}<button class="btn btn-primary w-full">Save</button>{% endif %}
+  </form>
+</div>
 {% endblock %}

@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
 import { env } from './env.js';
 
-export const redis = new Redis(env.REDIS_URL, { maxRetriesPerRequest: null });
+// Optional: cache helpers no-op when REDIS_URL is unset.
+export const redis = env.REDIS_URL ? new Redis(env.REDIS_URL, { maxRetriesPerRequest: null, lazyConnect: false }) : null;

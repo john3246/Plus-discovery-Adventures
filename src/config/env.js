@@ -1,21 +1,22 @@
 import { z } from 'zod';
 
+// DATABASE_URL is optional: without it the public site runs from sample data and /admin is disabled.
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
-  APP_URL: z.string().url(),
-  DATABASE_URL: z.string().min(1),
-  REDIS_URL: z.string().min(1),
-  SESSION_SECRET: z.string().min(64),
-  CSRF_SECRET: z.string().min(32),
-  SMTP_HOST: z.string(), SMTP_USER: z.string(), SMTP_PASS: z.string(), MAIL_FROM: z.string(),
-  STORAGE_DRIVER: z.enum(['local', 's3']).default('local'),
-  STORAGE_BUCKET: z.string().optional(), STORAGE_KEY: z.string().optional(), STORAGE_SECRET: z.string().optional(),
-  TURNSTILE_SITE_KEY: z.string(), TURNSTILE_SECRET: z.string(),
-  CLOUDFLARE_ZONE_ID: z.string().optional(), CLOUDFLARE_API_TOKEN: z.string().optional(),
+  APP_URL: z.string().url().default('http://localhost:3000'),
+  DATABASE_URL: z.string().optional(),
+  REDIS_URL: z.string().optional(),
+  SESSION_SECRET: z.string().min(32).optional(),
+  ADMIN_EMAIL: z.string().email().optional(),
+  ADMIN_PASSWORD: z.string().min(12).optional(),
   DEFAULT_LANG: z.string().default('en'),
   SUPPORTED_LANGS: z.string().default('en,sw'),
 });
 
-// App refuses to boot if a required variable is missing.
 export const env = schema.parse(process.env);
+export const hasDb = Boolean(env.DATABASE_URL);
+
+if (hasDb && env.NODE_ENV === 'production' && !env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET (32+ chars) is required in production');
+}

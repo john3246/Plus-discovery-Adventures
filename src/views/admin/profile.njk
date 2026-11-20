@@ -1,4 +1,14 @@
 {% extends "layouts/admin.njk" %}
+{% block title %}Profile{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold">Profile</h1>
+<h1 class="text-2xl font-bold">Your profile</h1>
+<p class="mt-1 text-sm text-stone-600">{{ user.name }} · {{ user.email }} · {{ user.role }}</p>
+<form method="post" action="/admin/profile/password" class="mt-5 max-w-md space-y-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+  <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-stone-500">Change password</h2>
+  <div><label class="label" for="current">Current password</label><input id="current" name="current" type="password" autocomplete="current-password" class="field">{% if errors.current %}<p class="error">{{ errors.current }}</p>{% endif %}</div>
+  <div><label class="label" for="password">New password (12+ characters)</label><input id="password" name="password" type="password" autocomplete="new-password" class="field">{% if errors.password %}<p class="error">{{ errors.password }}</p>{% endif %}</div>
+  <div><label class="label" for="confirm">Confirm new password</label><input id="confirm" name="confirm" type="password" autocomplete="new-password" class="field">{% if errors.confirm %}<p class="error">{{ errors.confirm }}</p>{% endif %}</div>
+  <button class="btn btn-primary">Update password</button>
+</form>
 {% endblock %}

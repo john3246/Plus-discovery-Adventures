@@ -1,8 +1,6 @@
 // Page controllers for tours, destinations and accommodation (sample-data backed).
-import { tours, findTour, toursByCategory } from '../../data/tours.js';
-import { destinations, findDestination } from '../../data/destinations.js';
-import { accommodations, findAccommodation, reviews } from '../../data/content.js';
-import { buildItinerary, INCLUDED, EXCLUDED } from '../../data/buildItinerary.js';
+import { getSnapshot, getItinerary } from '../store.js';
+import { INCLUDED, EXCLUDED } from '../../data/buildItinerary.js';
 import { tourStyles } from '../../data/site.js';
 
 const CATEGORY_PAGES = {
@@ -25,31 +23,37 @@ function applyFilters(list, q) {
 
 export function categoryPage(key) {
   const meta = CATEGORY_PAGES[key];
-  return (req, res) => {
-    const items = applyFilters(toursByCategory(meta.category), req.query);
+  return async (req, res) => {
+    const { tours } = await getSnapshot();
+    const items = applyFilters(tours.filter((t) => t.category === meta.category), req.query);
     res.render('pages/tours/list.njk', { ...meta, items, query: req.query, styles: tourStyles, basePath: `/${res.locals.lang}/${key}` });
   };
 }
 
-export function allToursPage(req, res) {
+export async function allToursPage(req, res) {
+  const { tours } = await getSnapshot();
   const items = applyFilters(tours, req.query);
   res.render('pages/tours/list.njk', { title: 'All Tours & Safaris', intro: 'Every trip we run, in one place.', items, query: req.query, styles: tourStyles, basePath: `/${res.locals.lang}/tours` });
 }
 
-export function tourPage(req, res, next) {
-  const tour = findTour(req.params.slug);
+export async function tourPage(req, res, next) {
+  const { tours, destinations, reviews } = await getSnapshot();
+  const tour = tours.find((t) => t.slug === req.params.slug);
   if (!tour) return next();
   const related = tours.filter((t) => t.category === tour.category && t.slug !== tour.slug).slice(0, 3);
   res.render('pages/tours/show.njk', {
     tour, related, reviews, included: INCLUDED, excluded: EXCLUDED,
-    itinerary: buildItinerary(tour), stops: tour.stops.map(findDestination).filter(Boolean),
+    itinerary: await getItinerary(tour), stops: tour.stops.map((s) => destinations.find((d) => d.slug === s)).filter(Boolean),
   });
 }
 
-export const destinationsPage = (req, res) => res.render('pages/destinations/list.njk', { items: destinations });
+export async function destinationsPage(req, res) {
+  res.render('pages/destinations/list.njk', { items: (await getSnapshot()).destinations });
+}
 
-export function destinationPage(req, res, next) {
-  const destination = findDestination(req.params.slug);
+export async function destinationPage(req, res, next) {
+  const { tours, destinations, accommodations } = await getSnapshot();
+  const destination = destinations.find((d) => d.slug === req.params.slug);
   if (!destination) return next();
   res.render('pages/destinations/show.njk', {
     destination,
@@ -59,13 +63,15 @@ export function destinationPage(req, res, next) {
   });
 }
 
-export const accommodationsPage = (req, res) => {
+export const accommodationsPage = async (req, res) => {
+  const { accommodations } = await getSnapshot();
   const items = req.query.tier ? accommodations.filter((a) => a.tier === req.query.tier) : accommodations;
   res.render('pages/accommodations/list.njk', { items, query: req.query });
 };
 
-export function accommodationPage(req, res, next) {
-  const stay = findAccommodation(req.params.slug);
+export async function accommodationPage(req, res, next) {
+  const { accommodations, destinations } = await getSnapshot();
+  const stay = accommodations.find((a) => a.slug === req.params.slug);
   if (!stay) return next();
-  res.render('pages/accommodations/show.njk', { stay, destination: findDestination(stay.destination) });
+  res.render('pages/accommodations/show.njk', { stay, destination: destinations.find((d) => d.slug === stay.destination) });
 }

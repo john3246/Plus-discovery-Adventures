@@ -1,0 +1,17 @@
+{% extends "layouts/admin.njk" %}
+{% from "admin/_macros.njk" import input %}
+{% block title %}{{ 'New ' + cfg.singular if isNew else 'Edit ' + cfg.singular }}{% endblock %}
+{% block content %}
+<nav class="text-sm text-stone-500"><a href="/admin/{{ key }}" class="hover:underline">{{ cfg.label }}</a> / {{ 'New' if isNew else 'Edit' }}</nav>
+<h1 class="mt-1 text-2xl font-bold">{{ 'New ' + cfg.singular | lower if isNew else values[cfg.title] }}</h1>
+{% if errors | length %}<p role="alert" class="mt-4 rounded-md bg-red-50 px-4 py-3 text-sm text-red-800">Please fix the highlighted fields.</p>{% endif %}
+<form method="post" action="{{ '/admin/' + key + ('' if isNew else '/' + id) }}" class="mt-5 grid gap-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5 sm:grid-cols-2" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+  {% for f in cfg.fields %}{{ input(f, values, errors, options) }}{% endfor %}
+  <div class="flex items-center gap-3 sm:col-span-2">
+    <button class="btn btn-primary">Save</button>
+    <a href="/admin/{{ key }}" class="btn btn-outline">Cancel</a>
+    {% if not can(cfg.perm + ':publish') %}<span class="text-xs text-stone-500">You can save drafts; a publisher must publish.</span>{% endif %}
+  </div>
+</form>
+{% endblock %}

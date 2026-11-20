@@ -2,13 +2,15 @@ import { Router } from 'express';
 import * as c from './controllers/catalog.js';
 import * as p from './controllers/content.js';
 import * as f from './controllers/forms.js';
+import { getSnapshot } from './store.js';
 
 const LANGS = ['en', 'sw'];
 export const siteRoutes = Router({ mergeParams: true });
 
 // Language prefix: /en/... or /sw/...; anything else falls through to 404.
-siteRoutes.use((req, res, next) => {
+siteRoutes.use(async (req, res, next) => {
   if (!LANGS.includes(req.params.lang)) return next('router');
+  res.locals.site = (await getSnapshot()).site;
   res.locals.lang = req.params.lang;
   res.locals.path = req.path;
   res.locals.langs = LANGS;
