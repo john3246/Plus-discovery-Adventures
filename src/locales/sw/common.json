@@ -1,0 +1,8 @@
+{
+  "site": { "name": "Plus Discovery Adventure" },
+  "nav": {
+    "safaris": "Safari", "kilimanjaro": "Kilimanjaro", "dayTrips": "Safari za Siku Moja", "zanzibar": "Zanzibar",
+    "destinations": "Maeneo", "travelGuide": "Mwongozo wa Safari", "blog": "Blogu", "about": "Kuhusu Sisi",
+    "plan": "Panga safari yako", "contact": "Wasiliana Nasi"
+  }
+}

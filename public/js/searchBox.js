@@ -1,0 +1,2 @@
+// searchBox module
+export {};

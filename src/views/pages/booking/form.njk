@@ -1,0 +1,21 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero, field %}
+{% block title %}Request {{ tour.title }} | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Request this trip', tour.title, 'Book') }}
+<section class="section"><div class="container-x grid gap-8 lg:grid-cols-[1fr_320px]">
+  <form method="post" action="/{{ lang }}/book/{{ tour.slug }}" class="card grid gap-4 p-6 sm:grid-cols-2 sm:p-8" novalidate>
+    {{ field('name', 'Full name', values, errors, 'text', true) }}
+    {{ field('email', 'Email', values, errors, 'email', true) }}
+    {{ field('phone', 'Phone', values, errors, 'tel') }}
+    {{ field('country', 'Country', values, errors) }}
+    {{ field('travelDate', 'Travel date', values, errors, 'date', true) }}
+    {{ field('adults', 'Adults', values, errors, 'number', true) }}
+    {{ field('children', 'Children', values, errors, 'number') }}
+    <div class="sm:col-span-2"><label class="label" for="f-message">Message</label><textarea class="field" id="f-message" name="message" rows="4">{{ values.message }}</textarea></div>
+    <div class="hidden" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="sm:col-span-2"><button class="btn btn-primary">Send booking request</button><p class="mt-2 text-xs text-stone-500">No payment is taken. We confirm availability first.</p></div>
+  </form>
+  <aside class="card h-fit overflow-hidden"><img src="{{ tour.image | unsplash(640, 400) }}" alt="" class="aspect-[16/10] w-full object-cover"><div class="p-5"><h2 class="font-serif text-lg font-bold">{{ tour.title }}</h2><p class="mt-1 text-sm">{{ tour.days }} days · from {{ tour.price | money }} pp</p></div></aside>
+</div></section>
+{% endblock %}

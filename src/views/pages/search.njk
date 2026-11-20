@@ -1,0 +1,12 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero %}
+{% block title %}Search | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Search') }}
+<section class="section"><div class="container-x max-w-3xl">
+  <form method="get" action="/{{ lang }}/search" class="flex gap-2"><label class="sr-only" for="q">Search</label><input id="q" name="q" value="{{ q }}" class="field" placeholder="Search trips, destinations, articles"><button class="btn btn-dark">Search</button></form>
+  {% if q %}{% for group, label in {tours: 'Trips', destinations: 'Destinations', posts: 'Articles'} %}
+    <h2 class="mt-8 text-xl font-bold">{{ label }} ({{ found[group] | length }})</h2>
+    <ul class="mt-2 space-y-1">{% for r in found[group] %}<li><a class="text-sand-dark underline" href="/{{ lang }}/{{ 'tours' if group == 'tours' else ('destinations' if group == 'destinations' else 'blog') }}/{{ r.slug }}">{{ r.title or r.name }}</a></li>{% endfor %}</ul>{% endfor %}{% endif %}
+</div></section>
+{% endblock %}

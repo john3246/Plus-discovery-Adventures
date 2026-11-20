@@ -1,0 +1,10 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero %}
+{% block title %}Tanzania Safari Blog | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Blog', 'Guides, tips and stories from Tanzania.') }}
+<section class="section"><div class="container-x">
+  <p class="mb-6 flex flex-wrap gap-2 text-sm"><a class="btn btn-outline" href="/{{ lang }}/blog">All</a>{% for c in categories %}<a class="btn btn-outline" href="/{{ lang }}/blog/category/{{ c | lower | replace(' ', '-') }}">{{ c }}</a>{% endfor %}</p>
+  <div class="grid gap-6 md:grid-cols-3">{% for p in items %}<a href="/{{ lang }}/blog/{{ p.slug }}" class="card block"><img src="{{ p.image | unsplash(640, 400) }}" alt="" loading="lazy" class="aspect-[16/10] w-full object-cover"><div class="p-4"><p class="eyebrow">{{ p.category }} · {{ p.date | date }}</p><h2 class="mt-1 text-lg font-semibold">{{ p.title }}</h2><p class="mt-1 text-sm text-stone-600">{{ p.excerpt }}</p></div></a>{% endfor %}</div>
+</div></section>
+{% endblock %}

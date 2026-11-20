@@ -1,0 +1,7 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero %}
+{% block title %}FAQs | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Frequently asked questions') }}
+<section class="section"><div class="container-x max-w-3xl space-y-3">{% for f in faqs %}<details class="card p-5"><summary class="cursor-pointer font-semibold">{{ f[0] }}</summary><p class="mt-3 text-stone-600">{{ f[1] }}</p></details>{% endfor %}</div></section>
+{% endblock %}

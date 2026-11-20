@@ -1,0 +1,15 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero, heading, whyUsPanel %}
+{% from "partials/icons.njk" import icon %}
+{% block title %}About Us | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('About ' ~ site.fullName, 'Local experts. Lifetime experiences.', 'About us') }}
+<section class="section"><div class="container-x grid items-center gap-10 lg:grid-cols-2">
+  <img src="{{ '1523805009345-7448845a9e53' | unsplash(900, 650) }}" alt="Giraffe at sunset" class="rounded-xl object-cover" loading="lazy">
+  <div><p class="eyebrow">Our story</p><h2 class="mt-2 text-3xl font-bold">Discovery that stays with you</h2>
+    <p class="mt-4 text-stone-700">+Discovery plans safaris, Kilimanjaro climbs and Zanzibar holidays across Tanzania. Replace this paragraph with the company story, team and licences.</p>
+    <a class="btn btn-primary mt-6" href="/{{ lang }}/contact">Talk to us</a></div></div></section>
+<section class="section bg-white"><div class="container-x">{{ heading('Why us', 'What makes the difference') }}{{ whyUsPanel(whyUs) }}</div></section>
+<section class="section"><div class="container-x">{{ heading('How it works', 'From first message to first game drive') }}
+  <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">{% for s in steps %}<div class="text-center">{{ icon(s.icon, 'h-12 w-12 mx-auto') }}<h3 class="mt-3 font-semibold">{{ s.title }}</h3><p class="mt-1 text-sm text-stone-600">{{ s.text }}</p></div>{% endfor %}</div></div></section>
+{% endblock %}

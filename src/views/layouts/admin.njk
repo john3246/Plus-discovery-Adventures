@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Admin{% endblock %} · Plus Discovery Adventure</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="bg-stone-100">
+  <div class="flex min-h-screen">
+    <aside class="w-60 bg-stone-900 text-stone-100 p-4">{# sidebar rendered by permission #}</aside>
+    <main class="flex-1 p-6">{% include "partials/flash.njk" %}{% block content %}{% endblock %}</main>
+  </div>
+</body>
+</html>

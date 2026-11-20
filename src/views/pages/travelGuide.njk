@@ -1,0 +1,10 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero, destCard %}
+{% block title %}Tanzania Travel Guide | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Tanzania travel guide', 'Everything to know before you go.', 'Travel guide') }}
+<section class="section"><div class="container-x space-y-12">
+  <div class="grid gap-4 sm:grid-cols-3">{% for l in [['Best time to visit','/blog/best-time-to-visit-tanzania'],['The Great Migration','/blog/great-migration-explained'],['Choosing a Kilimanjaro route','/blog/kilimanjaro-route-guide']] %}<a class="card p-6 font-semibold hover:text-sand-dark" href="/{{ lang }}{{ l[1] }}">{{ l[0] }} →</a>{% endfor %}</div>
+  <div><h2 class="mb-6 text-2xl font-bold">National parks and destinations</h2><div class="grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in destinations %}{{ destCard(d, lang) }}{% endfor %}</div></div>
+</div></section>
+{% endblock %}

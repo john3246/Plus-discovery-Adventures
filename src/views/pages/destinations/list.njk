@@ -1,0 +1,7 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import destCard, pageHero %}
+{% block title %}Tanzania Destinations | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Destinations', 'National parks, mountains and islands.') }}
+<section class="section"><div class="container-x grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in items %}{{ destCard(d, lang) }}{% endfor %}</div></section>
+{% endblock %}

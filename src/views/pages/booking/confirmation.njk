@@ -1,0 +1,11 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero %}
+{% block title %}Request received | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Request received') }}
+<section class="section"><div class="container-x max-w-xl text-center"><div class="card p-8">
+  <p class="eyebrow">Your reference</p><p class="mt-2 font-serif text-4xl font-bold">{{ reference }}</p>
+  {% if tour %}<p class="mt-4 text-stone-600">{{ tour.title }}</p>{% endif %}
+  <p class="mt-4 text-sm text-stone-600">A travel planner will confirm availability and send your proposal by email.</p>
+  <a class="btn btn-dark mt-6" href="/{{ lang }}">Back to home</a></div></div></section>
+{% endblock %}

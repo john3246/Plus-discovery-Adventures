@@ -1,0 +1,73 @@
+{% from "partials/icons.njk" import icon %}
+
+{# Safari card: image, chips, serif title, stars, price, nights, "You visit" route (Safari Soles style) #}
+{% macro tourCard(t, lang) %}
+<article class="card group flex h-full flex-col">
+  <a href="/{{ lang }}/tours/{{ t.slug }}" class="block aspect-[16/10] overflow-hidden" tabindex="-1" aria-hidden="true">
+    <img src="{{ t.image | unsplash(720, 450) }}" alt="" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+  </a>
+  <div class="flex flex-1 flex-col p-5">
+    <ul class="flex flex-wrap gap-2 text-[11px] font-medium">
+      <li class="rounded-full border border-ink px-3 py-1">{{ t.tags[0] }}</li>
+      <li class="rounded-full bg-sky-100 px-3 py-1 text-sky-700">{{ t.tags[1] }}</li>
+      <li class="rounded-full bg-rose-100 px-3 py-1 text-rose-700">{{ t.tags[2][0] }}</li>
+      <li class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">{{ t.tags[3] }}</li>
+    </ul>
+    <h3 class="mt-4 font-serif text-xl font-bold leading-snug"><a href="/{{ lang }}/tours/{{ t.slug }}" class="hover:text-sand-dark">{{ t.title }}</a></h3>
+    <p class="mt-3 flex items-center gap-2 text-sm"><span class="text-lg tracking-tight text-sand" aria-hidden="true">★★★★★</span><b>{{ t.rating }}/5</b><span class="text-stone-500">({{ t.reviews }} Reviews)</span></p>
+    <p class="mt-3 text-lg font-semibold text-sand-dark">$ {{ t.price | money | replace('$', '') }} <small class="text-sm font-normal text-stone-500">pp</small></p>
+    <p class="mt-3 flex items-center gap-2 text-sm text-stone-700">{{ icon('calendar', 'h-4 w-4') }}{{ t.days }} {{ 'Day' if t.days == 1 else 'Days' }}{% if t.nights %} - {{ t.nights }} {{ 'Night' if t.nights == 1 else 'Nights' }}{% endif %}</p>
+    <p class="mt-3 text-sm text-stone-700"><span class="font-medium">You Visit :</span>
+      {% for v in t.visit %}{{ v.name }}{% if v.mark == 'Start' %} <span class="text-emerald-600">(Start)</span>{% elif v.mark == 'End' %} <span class="text-red-600">(End)</span>{% endif %}{{ ', ' if not loop.last }}{% endfor %}</p>
+    <a href="/{{ lang }}/tours/{{ t.slug }}" class="btn btn-dark mt-auto w-full" style="margin-top:1.25rem">View trip</a>
+  </div>
+</article>
+{% endmacro %}
+
+{% macro destCard(d, lang) %}
+<a href="/{{ lang }}/destinations/{{ d.slug }}" class="group relative block aspect-[3/4] overflow-hidden rounded-xl">
+  <img src="{{ d.image | unsplash(600, 800) }}" alt="{{ d.name }}" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
+  <div class="absolute bottom-0 p-4 text-white"><p class="text-xs uppercase tracking-wider text-sand">{{ d.region }}</p><h3 class="text-xl font-semibold">{{ d.name }}</h3><p class="text-sm text-stone-200">{{ d.tagline }}</p></div>
+</a>
+{% endmacro %}
+
+{% macro stars(n) %}<span class="text-sand" aria-label="{{ n }} out of 5">{{ '★★★★★'.slice(0, n) }}</span>{% endmacro %}
+
+{% macro heading(eyebrow, title, intro) %}
+<div class="mx-auto mb-10 max-w-2xl text-center">
+  <p class="eyebrow">{{ eyebrow }}</p>
+  <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{{ title }}</h2>
+  {% if intro %}<p class="mt-3 text-stone-600">{{ intro }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{# Why choose us: white panel, centred orange line icons, bold heading, short paragraph #}
+{% macro whyUsPanel(items) %}
+<div class="mx-auto max-w-6xl rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5 sm:p-12">
+  <div class="grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+    {% for w in items %}
+    <div class="flex flex-col items-center text-center">
+      {{ icon(w.icon, 'h-16 w-16') }}
+      <h3 class="mt-4 font-sans text-lg font-semibold">{{ w.title }}</h3>
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-stone-600">{{ w.text }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro field(name, label, values, errors, type='text', required=false) %}
+<div>
+  <label class="label" for="f-{{ name }}">{{ label }}{% if required %} *{% endif %}</label>
+  <input class="field" id="f-{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ values[name] }}" {% if required %}required{% endif %}>
+  {% if errors[name] %}<p class="error">{{ errors[name] }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro pageHero(title, sub, crumb) %}
+<section class="bg-ink py-14 text-white"><div class="container-x">
+  <nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / {{ crumb or title }}</nav>
+  <h1 class="mt-2 text-4xl font-bold">{{ title }}</h1>{% if sub %}<p class="mt-2 max-w-2xl text-stone-300">{{ sub }}</p>{% endif %}
+</div></section>
+{% endmacro %}

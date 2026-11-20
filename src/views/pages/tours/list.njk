@@ -1,0 +1,39 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import tourCard %}
+{% block title %}{{ title }} | {{ site.fullName }}{% endblock %}
+
+{% block content %}
+<section class="bg-ink py-14 text-white"><div class="container-x"><nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / {{ title }}</nav>
+  <h1 class="mt-2 text-4xl font-bold">{{ title }}</h1><p class="mt-2 max-w-2xl text-stone-300">{{ intro }}</p></div></section>
+
+<section class="section">
+  <div class="container-x grid gap-8 lg:grid-cols-[260px_1fr]">
+    <form method="get" action="{{ basePath }}" class="card h-fit space-y-4 p-5">
+      <h2 class="font-sans text-sm font-bold uppercase tracking-wider">Filter trips</h2>
+      <div><label class="label" for="s-style">Style</label>
+        <select id="s-style" name="style" class="field"><option value="">Any</option>
+          {% for s in ['joining','camping','mid-range','luxury','migration','honeymoon','trek','cultural','beach'] %}<option value="{{ s }}" {{ 'selected' if query.style == s }}>{{ s | titleCase }}</option>{% endfor %}</select></div>
+      <div><label class="label" for="s-dur">Duration</label>
+        <select id="s-dur" name="duration" class="field"><option value="">Any</option>
+          <option value="short" {{ 'selected' if query.duration == 'short' }}>1 to 3 days</option>
+          <option value="medium" {{ 'selected' if query.duration == 'medium' }}>4 to 6 days</option>
+          <option value="long" {{ 'selected' if query.duration == 'long' }}>7+ days</option></select></div>
+      <div><label class="label" for="s-price">Max price (pp)</label>
+        <select id="s-price" name="maxPrice" class="field"><option value="">Any</option>
+          {% for p in [500, 1500, 3000, 5000] %}<option value="{{ p }}" {{ 'selected' if query.maxPrice == p }}>Up to {{ p | money }}</option>{% endfor %}</select></div>
+      <div><label class="label" for="s-sort">Sort by</label>
+        <select id="s-sort" name="sort" class="field"><option value="popular">Popularity</option>
+          <option value="price" {{ 'selected' if query.sort == 'price' }}>Price</option>
+          <option value="duration" {{ 'selected' if query.sort == 'duration' }}>Duration</option></select></div>
+      <button class="btn btn-dark w-full">Apply</button>
+      <a href="{{ basePath }}" class="block text-center text-xs text-stone-500 hover:underline">Reset</a>
+    </form>
+    <div>
+      <p class="mb-4 text-sm text-stone-600">{{ items | length }} trip{{ '' if items | length == 1 else 's' }}</p>
+      {% if items | length %}
+      <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">{% for t in items %}{{ tourCard(t, lang) }}{% endfor %}</div>
+      {% else %}<p class="card p-8 text-center">No trips match these filters. <a class="text-sand-dark underline" href="{{ basePath }}">Reset</a> or <a class="text-sand-dark underline" href="/{{ lang }}/plan-your-trip">ask us to tailor one</a>.</p>{% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

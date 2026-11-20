@@ -1,0 +1,28 @@
+<div class="bg-ink text-xs text-stone-200">
+  <div class="container-x flex items-center justify-between py-2">
+    <p class="hidden sm:block">Tailor-made trips in Tanzania · <a class="hover:text-sand" href="tel:{{ site.phone }}">{{ site.phone }}</a> · <a class="hover:text-sand" href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+    <p class="flex gap-3 ml-auto">
+      {% for l in langs %}<a href="/{{ l }}{{ path if path != '/' else '' }}" class="{{ 'font-bold text-sand' if l == lang else 'hover:text-sand' }} uppercase">{{ l }}</a>{% endfor %}
+      <span class="text-stone-500">|</span><span>USD</span>
+    </p>
+  </div>
+</div>
+<header class="sticky top-0 z-40 border-b border-black/5 bg-white/95 backdrop-blur">
+  <div class="container-x flex items-center justify-between py-3">
+    <a href="/{{ lang }}" aria-label="{{ site.fullName }} home"><img src="/img/logo.png" alt="{{ site.name }} {{ site.tagline }}" class="h-12 w-auto" width="150" height="62"></a>
+    <button id="nav-toggle" class="lg:hidden rounded border px-3 py-2 text-sm" aria-expanded="false" aria-controls="main-nav">Menu</button>
+    <nav id="main-nav" class="hidden lg:flex items-center gap-1 absolute lg:static left-0 right-0 top-full bg-white lg:bg-transparent border-b lg:border-0 p-4 lg:p-0 flex-col lg:flex-row items-start lg:items-center" aria-label="Main">
+      {% for item in mainNav %}
+      <div class="group relative">
+        <a href="/{{ lang }}{{ item.url }}" class="block px-3 py-2 text-sm font-medium hover:text-sand">{{ t(lang, 'nav.' + item.key) }}{% if item.children %} <span aria-hidden="true">▾</span>{% endif %}</a>
+        {% if item.children %}
+        <div class="lg:invisible lg:absolute lg:left-0 lg:top-full lg:min-w-52 lg:rounded-md lg:bg-white lg:p-2 lg:opacity-0 lg:shadow-lg lg:ring-1 lg:ring-black/5 group-hover:visible group-hover:opacity-100 focus-within:visible focus-within:opacity-100 pl-4 lg:pl-2">
+          {% for child in item.children %}<a href="/{{ lang }}{{ child[1] }}" class="block rounded px-3 py-2 text-sm hover:bg-cream hover:text-sand">{{ child[0] }}</a>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <a href="/{{ lang }}/plan-your-trip" class="btn btn-primary lg:ml-3 mt-2 lg:mt-0">{{ t(lang, 'nav.plan') }}</a>
+    </nav>
+  </div>
+</header>

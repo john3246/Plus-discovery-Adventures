@@ -1,0 +1,36 @@
+<footer class="bg-ink text-stone-300">
+  <div class="container-x grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <div class="inline-block rounded bg-white p-2"><img src="/img/logo.png" alt="{{ site.name }}" class="h-12 w-auto" width="150" height="62" loading="lazy"></div>
+      <p class="mt-4 text-sm">Tailor-made safaris, Kilimanjaro climbs and Zanzibar holidays, planned by local experts.</p>
+    </div>
+    <div>
+      <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-white">Explore</h3>
+      <ul class="mt-4 space-y-2 text-sm">
+        {% for l in [['Safaris','/safaris'],['Kilimanjaro','/kilimanjaro'],['Day trips','/day-trips'],['Zanzibar','/zanzibar'],['Destinations','/destinations'],['Accommodation','/accommodations']] %}
+        <li><a class="hover:text-sand" href="/{{ lang }}{{ l[1] }}">{{ l[0] }}</a></li>{% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-white">Company</h3>
+      <ul class="mt-4 space-y-2 text-sm">
+        {% for l in [['About us','/about'],['Travel guide','/travel-guide'],['Blog','/blog'],['Reviews','/reviews'],['FAQs','/faqs'],['Contact us','/contact'],['Terms & conditions','/terms'],['Privacy policy','/privacy']] %}
+        <li><a class="hover:text-sand" href="/{{ lang }}{{ l[1] }}">{{ l[0] }}</a></li>{% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-white">Contact</h3>
+      <ul class="mt-4 space-y-2 text-sm">
+        <li>{{ site.address }}</li>
+        <li><a class="hover:text-sand" href="tel:{{ site.phone }}">{{ site.phone }}</a></li>
+        <li><a class="hover:text-sand" href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+      </ul>
+      <form method="post" action="/{{ lang }}/newsletter" class="mt-4 flex gap-2">
+        <label class="sr-only" for="nl-email">Email</label>
+        <input id="nl-email" name="email" type="email" required placeholder="Newsletter email" class="field text-ink">
+        <button class="btn btn-primary">Join</button>
+      </form>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs">© {{ currentYear }} {{ site.fullName }}. All rights reserved.</div>
+</footer>

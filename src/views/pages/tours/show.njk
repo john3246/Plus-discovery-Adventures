@@ -1,0 +1,57 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import tourCard, stars %}
+{% block title %}{{ tour.title }} | {{ site.fullName }}{% endblock %}
+{% block description %}{{ tour.summary }}{% endblock %}
+
+{% block content %}
+<section class="relative isolate bg-ink text-white">
+  <img src="{{ tour.image | unsplash(1920, 800) }}" alt="{{ tour.title }}" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-55">
+  <div class="container-x py-20">
+    <nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / <a href="/{{ lang }}/tours">Tours</a> / {{ tour.title }}</nav>
+    <p class="eyebrow mt-4">{{ tour.style | titleCase }} · {{ tour.days }} day{{ '' if tour.days == 1 else 's' }}</p>
+    <h1 class="mt-2 max-w-3xl text-4xl font-bold sm:text-5xl">{{ tour.title }}</h1>
+    <p class="mt-4 text-2xl">From <b class="text-sand">{{ tour.price | money }}</b> <small class="text-sm text-stone-300">per person</small></p>
+  </div>
+</section>
+
+<nav class="sticky top-[88px] z-30 border-b bg-white text-sm" aria-label="Trip sections"><div class="container-x flex gap-5 overflow-x-auto py-3">
+  {% for a in [['overview','Overview'],['itinerary','Itinerary'],['prices','Prices'],['included','Included'],['stays','Destinations'],['request','Request a quote']] %}<a class="whitespace-nowrap font-medium hover:text-sand" href="#{{ a[0] }}">{{ a[1] }}</a>{% endfor %}
+</div></nav>
+
+<div class="container-x grid gap-10 py-12 lg:grid-cols-[1fr_340px]">
+  <div class="space-y-14">
+    <section id="overview"><h2 class="text-2xl font-bold">Overview</h2><p class="mt-3 text-stone-700">{{ tour.summary }} Our planners adapt the route, pace and accommodation to your dates and budget.</p></section>
+
+    <section id="itinerary"><h2 class="text-2xl font-bold">Day-by-day itinerary</h2>
+      <ol class="mt-5 space-y-4">{% for d in itinerary %}
+        <li class="card flex gap-4 p-5"><span class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-full bg-ink font-serif text-white"><small class="text-[9px] uppercase leading-none">Day</small><b class="leading-none">{{ d.day }}</b></span>
+          <div><h3 class="text-lg font-semibold">{{ d.title }}</h3><p class="mt-1 text-sm text-stone-600">{{ d.text }}</p></div></li>{% endfor %}</ol></section>
+
+    <section id="prices"><h2 class="text-2xl font-bold">Prices per person</h2>
+      <div class="mt-4 overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-ink text-white"><tr><th class="p-3">Group size</th><th class="p-3">Low season</th><th class="p-3">High season</th></tr></thead>
+        <tbody class="divide-y bg-white">
+          {% for g in [[2, 1.15, 1.35], [4, 1.0, 1.2], [6, 0.92, 1.1]] %}<tr><td class="p-3">{{ g[0] }} travellers</td><td class="p-3">{{ (tour.price * g[1]) | round | money }}</td><td class="p-3">{{ (tour.price * g[2]) | round | money }}</td></tr>{% endfor %}
+        </tbody></table></div>
+      <p class="mt-2 text-xs text-stone-500">Indicative sample prices. Excludes international flights.</p></section>
+
+    <section id="included" class="grid gap-6 sm:grid-cols-2">
+      <div><h2 class="text-2xl font-bold">Included</h2><ul class="mt-3 space-y-2 text-sm">{% for i in included %}<li class="flex gap-2"><span class="text-forest">✓</span>{{ i }}</li>{% endfor %}</ul></div>
+      <div><h2 class="text-2xl font-bold">Not included</h2><ul class="mt-3 space-y-2 text-sm">{% for i in excluded %}<li class="flex gap-2"><span class="text-red-700">✕</span>{{ i }}</li>{% endfor %}</ul></div>
+    </section>
+
+    <section id="stays"><h2 class="text-2xl font-bold">Where you will go</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">{% for d in stops %}<a href="/{{ lang }}/destinations/{{ d.slug }}" class="card flex gap-4 p-3"><img src="{{ d.image | unsplash(160, 160) }}" alt="" loading="lazy" class="h-20 w-20 rounded-lg object-cover"><div><h3 class="font-semibold">{{ d.name }}</h3><p class="text-sm text-stone-600">{{ d.tagline }}</p></div></a>{% endfor %}</div></section>
+  </div>
+
+  <aside id="request" class="h-fit space-y-4 lg:sticky lg:top-40">
+    <div class="card p-6"><p class="text-sm text-stone-500">From</p><p class="text-3xl font-bold text-sand-dark">{{ tour.price | money }} <small class="text-sm font-normal text-stone-500">pp</small></p>
+      <a href="/{{ lang }}/book/{{ tour.slug }}" class="btn btn-primary mt-4 w-full">Request this trip</a>
+      <a href="/{{ lang }}/plan-your-trip" class="btn btn-outline mt-2 w-full">Customise it</a>
+      <p class="mt-4 text-xs text-stone-500">No payment now. We reply with a tailored proposal.</p></div>
+    <div class="card p-6 text-sm"><b>Need help?</b><p class="mt-1">Call <a class="text-sand-dark" href="tel:{{ site.phone }}">{{ site.phone }}</a></p></div>
+  </aside>
+</div>
+
+<section class="section bg-white"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Similar trips</h2>
+  <div class="grid gap-6 md:grid-cols-3">{% for t in related %}{{ tourCard(t, lang) }}{% endfor %}</div></div></section>
+{% endblock %}

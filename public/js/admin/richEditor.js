@@ -1,0 +1,2 @@
+// richEditor module
+export {};

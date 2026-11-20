@@ -1,0 +1,8 @@
+{
+  "site": { "name": "Plus Discovery Adventure" },
+  "nav": {
+    "safaris": "Safaris", "kilimanjaro": "Kilimanjaro", "dayTrips": "Day Trips", "zanzibar": "Zanzibar",
+    "destinations": "Destinations", "travelGuide": "Travel Guide", "blog": "Blog", "about": "About Us",
+    "plan": "Plan your trip", "contact": "Contact"
+  }
+}

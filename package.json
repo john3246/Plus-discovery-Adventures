@@ -1,0 +1,31 @@
+{
+  "name": "plus-discovery-adventure",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "watch:css": "tailwindcss -i styles/input.css -o public/css/app.css --watch",
+    "build:css": "tailwindcss -i styles/input.css -o public/css/app.css --minify",
+    "start": "node src/server.js",
+    "worker": "node src/worker.js",
+    "migrate": "node-pg-migrate -m migrations",
+    "seed": "node seeds/seedRoles.js && node seeds/seedAdminUser.js",
+    "lint": "eslint . && npm run check:size",
+    "test": "vitest run",
+    "check:size": "node scripts/checkFileSize.js"
+  },
+  "dependencies": {
+    "argon2": "^0.41.0", "bullmq": "^5.0.0", "compression": "^1.7.0", "connect-redis": "^8.0.0",
+    "csrf-sync": "^4.0.0", "express": "^5.0.0", "express-rate-limit": "^7.0.0", "express-session": "^1.18.0",
+    "helmet": "^8.0.0", "hpp": "^0.2.3", "i18next": "^24.0.0", "ioredis": "^5.4.0", "multer": "^2.0.0",
+    "node-pg-migrate": "^7.0.0", "nodemailer": "^6.9.0", "nunjucks": "^3.2.4", "pg": "^8.13.0",
+    "pino": "^9.0.0", "pino-http": "^10.0.0", "rate-limit-redis": "^4.0.0", "sanitize-html": "^2.13.0",
+    "sharp": "^0.33.0", "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0", "eslint": "^8.57.0", "husky": "^9.0.0", "nodemon": "^3.1.0",
+    "prettier": "^3.3.0", "supertest": "^7.0.0", "tailwindcss": "^4.0.0", "vitest": "^2.0.0"
+  }
+}

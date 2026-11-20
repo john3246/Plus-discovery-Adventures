@@ -1,0 +1,26 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import tourCard, destCard %}
+{% block title %}{{ destination.name }} Safari Guide and Best Time | {{ site.fullName }}{% endblock %}
+{% block description %}{{ destination.summary }}{% endblock %}
+{% block content %}
+<section class="relative isolate bg-ink py-24 text-white">
+  <img src="{{ destination.image | unsplash(1920, 800) }}" alt="{{ destination.name }}" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-55">
+  <div class="container-x"><nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / <a href="/{{ lang }}/destinations">Destinations</a> / {{ destination.name }}</nav>
+    <p class="eyebrow mt-4">{{ destination.region }}</p><h1 class="mt-2 text-5xl font-bold">{{ destination.name }}</h1><p class="mt-3 text-xl text-stone-200">{{ destination.tagline }}</p></div>
+</section>
+<div class="container-x grid gap-10 py-14 lg:grid-cols-[1fr_320px]">
+  <div class="space-y-10">
+    <p class="text-lg text-stone-700">{{ destination.summary }}</p>
+    <div class="grid gap-8 sm:grid-cols-2">
+      <section><h2 class="text-2xl font-bold">Highlights</h2><ul class="mt-3 list-disc space-y-2 pl-5 text-stone-700">{% for h in destination.highlights %}<li>{{ h }}</li>{% endfor %}</ul></section>
+      <section><h2 class="text-2xl font-bold">Wildlife</h2><ul class="mt-3 list-disc space-y-2 pl-5 text-stone-700">{% for w in destination.wildlife %}<li>{{ w }}</li>{% endfor %}</ul></section>
+    </div>
+    <section><h2 class="text-2xl font-bold">Best time to visit</h2><p class="mt-3 text-stone-700">{{ destination.bestTime }}</p></section>
+    <section><h2 class="text-2xl font-bold">Where to stay</h2><ul class="mt-3 space-y-2">{% for s in stays %}<li><a class="text-sand-dark underline" href="/{{ lang }}/accommodations/{{ s.slug }}">{{ s.name }}</a> <span class="text-sm text-stone-500">({{ s.type }})</span></li>{% endfor %}</ul></section>
+  </div>
+  <aside class="card h-fit p-6"><h2 class="font-serif text-xl font-bold">Visit {{ destination.name }}</h2><p class="mt-2 text-sm text-stone-600">Tell us your dates and we will build the trip around it.</p>
+    <a class="btn btn-primary mt-4 w-full" href="/{{ lang }}/plan-your-trip">Plan this trip</a></aside>
+</div>
+<section class="section bg-white"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Trips including {{ destination.name }}</h2><div class="grid gap-6 md:grid-cols-3">{% for t in related %}{{ tourCard(t, lang) }}{% endfor %}</div></div></section>
+<section class="section"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">More destinations</h2><div class="grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in others %}{{ destCard(d, lang) }}{% endfor %}</div></div></section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "layouts/public.njk" %}
+{% from "partials/macros.njk" import pageHero %}
+{% block title %}Safari Accommodation | {{ site.fullName }}{% endblock %}
+{% block content %}
+{{ pageHero('Accommodation', 'Lodges, tented camps and beach resorts we use.') }}
+<section class="section"><div class="container-x">
+  <p class="mb-6 flex flex-wrap gap-2 text-sm">{% for t in [['','All'],['camping','Camping'],['mid-range','Mid-range'],['luxury','Luxury'],['beach','Beach']] %}<a class="btn {{ 'btn-dark' if query.tier == t[0] or (not query.tier and not t[0]) else 'btn-outline' }}" href="/{{ lang }}/accommodations{{ '?tier=' + t[0] if t[0] }}">{{ t[1] }}</a>{% endfor %}</p>
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{% for a in items %}
+    <a href="/{{ lang }}/accommodations/{{ a.slug }}" class="card block"><img src="{{ a.image | unsplash(640, 420) }}" alt="{{ a.name }}" loading="lazy" class="aspect-[16/10] w-full object-cover"><div class="p-4"><p class="eyebrow">{{ a.type }} · {{ a.priceRange }}</p><h3 class="mt-1 text-lg font-semibold">{{ a.name }}</h3><p class="mt-1 text-sm text-stone-600">{{ a.description }}</p></div></a>{% endfor %}</div>
+</div></section>
+{% endblock %}
