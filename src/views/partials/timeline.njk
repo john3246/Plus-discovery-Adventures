@@ -1,0 +1,39 @@
+{# Day-by-day timeline: pin markers on a vertical line; photo, story, destination panel, then the day's facts. #}
+{% macro pin() %}<span class="tl-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11.5a7 7 0 1 0-14 0C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>{% endmacro %}
+
+{% macro timelineDays(days, lang, link) %}
+<ol class="tl">
+  <li class="tl-item">{{ pin() }}
+    <h3 class="tl-head">Arrival</h3>
+    <p class="mt-1 text-sm text-stone-600">Send us your flight details with your request and we will plan the start of your trip around them.</p></li>
+
+  {% for d in days %}
+  <li class="tl-item tl-day">{{ pin() }}
+    {% if d.image %}<img src="{{ d.image | unsplash(900, 420) }}" alt="{{ d.place.name }}" loading="lazy" class="mb-4 aspect-[15/7] w-full rounded-lg object-cover">{% endif %}
+    <p class="eyebrow">Day {{ d.day }}</p>
+    <h3 class="tl-head">{{ d.title }}</h3>
+    {% for p in d.paragraphs %}<p class="mt-2 text-sm leading-relaxed text-stone-700">{{ link(p) }}</p>{% endfor %}
+
+    {% if d.place %}
+    <p class="mt-4 text-sm"><b>Main destination:</b> <a class="inline-link font-semibold" href="/{{ lang }}/destinations/{{ d.place.slug }}">{{ d.place.name }}</a></p>
+    {% if d.showPanel %}
+    <div class="tl-panel">
+      <div><p class="font-semibold">Best time to visit</p><p class="mt-1 text-stone-600">{{ d.place.bestTime }}</p></div>
+      <div class="tl-wildlife"><p class="text-center font-semibold">What you may see</p>
+        <ul>{% for w in d.place.wildlife %}<li>{{ w }}</li>{% endfor %}</ul></div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <dl class="tl-facts">
+      {% if d.activities.length %}<div><dt>Activities</dt><dd>{{ d.activities | join(', ') }}</dd></div>{% endif %}
+      {% if d.facts and d.facts.length %}<div><dt>Trek details</dt><dd>{% for f in d.facts %}<span class="block">{{ f }}</span>{% endfor %}</dd></div>{% endif %}
+      {% if d.stay %}<div><dt>Accommodation</dt><dd>{{ d.stay }}</dd></div>{% endif %}
+      {% if d.meals %}<div><dt>Meals</dt><dd>{{ d.meals }}</dd></div>{% endif %}
+    </dl>
+  </li>
+  {% endfor %}
+
+  <li class="tl-item">{{ pin() }}<h3 class="tl-head">End of tour</h3></li>
+</ol>
+{% endmacro %}

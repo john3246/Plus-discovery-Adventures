@@ -42,7 +42,7 @@ async function fromDb() {
   };
 }
 
-const fromSample = () => ({ site: defaultSite, destinations: sampleDest, tours: sampleTours, accommodations: sampleStays, posts: samplePosts, reviews: sampleReviews });
+const fromSample = () => ({ site: defaultSite, destinations: sampleDest, tours: sampleTours, accommodations: sampleStays, posts: samplePosts, reviews: sampleReviews.filter((r) => r.source !== 'Sample') });
 
 export async function getSnapshot() {
   if (cache && Date.now() - cachedAt < TTL_MS) return cache;

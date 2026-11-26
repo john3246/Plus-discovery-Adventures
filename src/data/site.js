@@ -42,7 +42,7 @@ export const mainNav = [
   { key: 'dayTrips', url: '/day-trips' },
   { key: 'zanzibar', url: '/zanzibar' },
   { key: 'destinations', url: '/destinations' },
-  { key: 'travelGuide', url: '/travel-guide', children: [['Accommodation', '/accommodations'], ['Gallery', '/gallery'], ['FAQs', '/faqs'], ['Reviews', '/reviews']] },
+  { key: 'travelGuide', url: '/travel-guide', children: [['Accommodation', '/accommodations'], ['Gallery', '/gallery'], ['FAQs', '/faqs']] },
   { key: 'blog', url: '/blog' },
   { key: 'about', url: '/about' },
 ];

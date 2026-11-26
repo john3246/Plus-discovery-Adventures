@@ -140,3 +140,23 @@
   * { scrollbar-width: none; }
   *::-webkit-scrollbar { display: none; }
 }
+
+/* Day-by-day timeline on tour pages */
+@layer components {
+  .tl { @apply relative mt-5 rounded-xl bg-white p-5 shadow-sm ring-1 ring-black/5 sm:p-6; }
+  .tl-item { position: relative; padding-left: 2.75rem; padding-bottom: 2rem; }
+  .tl-item:last-child { padding-bottom: 0; }
+  /* The line joins each pin to the next one. */
+  .tl-item:not(:last-child)::before { content: ""; position: absolute; left: 0.9rem; top: 1.9rem; bottom: 0; width: 2px; background: rgb(0 0 0 / 0.1); }
+  .tl-pin { @apply absolute left-0 top-0 flex h-8 w-8 items-center justify-center text-sand-dark; }
+  .tl-pin svg { @apply h-7 w-7; }
+  .tl-head { @apply text-xl font-bold; }
+  .tl-panel { @apply mt-3 rounded-lg border border-sand/30 bg-cream p-4 text-sm; }
+  .tl-wildlife { @apply mt-4 border-t border-black/10 pt-4; }
+  .tl-wildlife ul { @apply mt-3 flex flex-wrap justify-center gap-2; }
+  .tl-wildlife li { @apply rounded-full bg-white px-3 py-1 text-stone-700 ring-1 ring-black/10; }
+  .tl-facts { @apply mt-4 divide-y divide-black/5 text-sm; }
+  .tl-facts > div { @apply grid gap-1 py-2 sm:grid-cols-[9rem_1fr]; }
+  .tl-facts dt { @apply font-semibold; }
+  .tl-facts dd { @apply text-stone-700; }
+}

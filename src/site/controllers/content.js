@@ -45,7 +45,10 @@ export async function blogPostPage(req, res, next) {
 }
 
 export const galleryPage = async (req, res) => res.render('pages/gallery.njk', { images: (await getSnapshot()).gallery });
-export const reviewsPage = async (req, res) => res.render('pages/reviews.njk', { reviews: (await getSnapshot()).reviews });
+export const reviewsPage = async (req, res, next) => {
+  const { reviews } = await getSnapshot();
+  return reviews.length ? res.render('pages/reviews.njk', { reviews }) : next(); // no empty reviews page
+};
 export const faqsPage = async (req, res) => {
   const { faqs } = await getSnapshot();
   res.locals.schemas.push(seo.faqSchema(faqs.map(([question, answer]) => ({ question, answer }))));

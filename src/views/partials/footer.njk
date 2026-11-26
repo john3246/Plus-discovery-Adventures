@@ -20,7 +20,7 @@
     <div>
       <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-white">Company</h3>
       <ul class="mt-4 space-y-2 text-sm">
-        {% for l in [['About us','/about'],['Travel guide','/travel-guide'],['Blog','/blog'],['Reviews','/reviews'],['FAQs','/faqs'],['Contact us','/contact'],['Terms & conditions','/terms'],['Privacy policy','/privacy']] %}
+        {% for l in [['About us','/about'],['Travel guide','/travel-guide'],['Blog','/blog'],['FAQs','/faqs'],['Contact us','/contact'],['Terms & conditions','/terms'],['Privacy policy','/privacy']] %}
         <li><a class="hover:text-sand" href="/{{ lang }}{{ l[1] }}">{{ l[0] }}</a></li>{% endfor %}
       </ul>
     </div>

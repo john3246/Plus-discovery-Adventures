@@ -2,7 +2,7 @@
 // Content is only hidden by this script, so the page stays fully readable without JavaScript.
 const TARGETS = [
   'main .section .container-x > *', 'main .section .grid > *', 'main section > .container-x.grid > div',
-  'main #itinerary li', 'main .guide > h2', 'main .guide-table',
+  'main #itinerary .tl-item', 'main .guide > h2', 'main .guide-table',
 ].join(',');
 const STAGGER_MS = 90;
 

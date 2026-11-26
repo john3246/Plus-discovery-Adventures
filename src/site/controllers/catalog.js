@@ -2,6 +2,7 @@
 import { getSnapshot, getItinerary } from '../store.js';
 import { INCLUDED, EXCLUDED, INCLUDED_TREK, EXCLUDED_TREK } from '../../data/buildItinerary.js';
 import { guides } from '../guides.js';
+import { timeline } from '../itinerary.js';
 import { destinationSlides } from '../../data/destinationSlides.js';
 import { createLinker } from '../internalLinks.js';
 import * as seo from '../seo.js';
@@ -66,7 +67,7 @@ export async function tourPage(req, res, next) {
     link: createLinker(res.locals.lang), reading: posts.filter((x) => topic.test(x.slug)).slice(0, 3),
     guideStops: tour.stops.filter((s) => guides[s]),
     tour, related, reviews, included: tour.category === 'kilimanjaro' ? INCLUDED_TREK : INCLUDED, excluded: tour.category === 'kilimanjaro' ? EXCLUDED_TREK : EXCLUDED,
-    itinerary: await getItinerary(tour), stops: tour.stops.map((s) => destinations.find((d) => d.slug === s)).filter(Boolean),
+    itinerary: timeline(tour, await getItinerary(tour), destinations), stops: tour.stops.map((s) => destinations.find((d) => d.slug === s)).filter(Boolean),
   });
 }
 

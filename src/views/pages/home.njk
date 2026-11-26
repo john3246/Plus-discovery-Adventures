@@ -152,6 +152,7 @@
 </section>
 
 {# 12. Reviews #}
+{% if reviews.length %}
 <section class="section bg-white">
   <div class="container-x">
     {{ heading('Reviews', 'What fellow explorers loved') }}
@@ -161,6 +162,7 @@
     {% if isDev %}<p class="mt-4 text-center text-xs text-stone-500">Sample reviews and ratings: replace with real, approved ones before launch.</p>{% endif %}
   </div>
 </section>
+{% endif %}
 
 {# 13. FAQ + blog #}
 <section class="section">

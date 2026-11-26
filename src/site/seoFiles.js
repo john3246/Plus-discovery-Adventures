@@ -6,7 +6,7 @@ import { posts, accommodations } from '../data/content.js';
 export const seoFiles = Router();
 const BASE = process.env.APP_URL ?? 'http://localhost:3000';
 const STATIC = ['', '/safaris', '/kilimanjaro', '/day-trips', '/zanzibar', '/tours', '/destinations', '/accommodations',
-  '/gallery', '/blog', '/about', '/reviews', '/faqs', '/travel-guide', '/contact', '/plan-your-trip', '/terms', '/privacy'];
+  '/gallery', '/blog', '/about', '/faqs', '/travel-guide', '/contact', '/plan-your-trip', '/terms', '/privacy'];
 
 function urls(lang) {
   return [...STATIC, ...tours.map((t) => `/tours/${t.slug}`), ...destinations.map((d) => `/destinations/${d.slug}`),
