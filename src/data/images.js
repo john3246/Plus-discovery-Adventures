@@ -20,6 +20,6 @@ export const IMG = {
 
 export function unsplash(id, w = 800, h = 600) {
   if (!id) return `https://images.unsplash.com/photo-${IMG.jeep}?auto=format&fit=crop&w=${w}&h=${h}&q=75`;
-  if (String(id).startsWith('http')) return id; // admin-entered full URL
+  if (String(id).startsWith('http') || String(id).startsWith('/')) return id; // admin-entered URL or our own file
   return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=75`;
 }

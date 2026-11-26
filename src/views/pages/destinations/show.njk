@@ -1,26 +1,52 @@
 {% extends "layouts/public.njk" %}
 {% from "partials/macros.njk" import tourCard, destCard %}
-{% block title %}{{ destination.name }} Safari Guide and Best Time | {{ site.fullName }}{% endblock %}
-{% block description %}{{ destination.summary }}{% endblock %}
+{% from "partials/heroSlides.njk" import heroSlides %}
+{% block title %}{% if guide and guide.metaTitle %}{{ guide.metaTitle }}{% else %}{{ destination.name }} Safari Guide and Best Time{% endif %} | {{ site.fullName }}{% endblock %}
+{% block description %}{% if guide and guide.metaDescription %}{{ guide.metaDescription }}{% else %}{{ destination.summary }}{% endif %}{% endblock %}
+{% block ogImage %}{{ destination.image | unsplash(1200, 630) }}{% endblock %}
 {% block content %}
-<section class="relative isolate bg-ink py-24 text-white">
-  <img src="{{ destination.image | unsplash(1920, 800) }}" alt="{{ destination.name }}" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-55">
-  <div class="container-x"><nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / <a href="/{{ lang }}/destinations">Destinations</a> / {{ destination.name }}</nav>
-    <p class="eyebrow mt-4">{{ destination.region }}</p><h1 class="mt-2 text-5xl font-bold">{{ destination.name }}</h1><p class="mt-3 text-xl text-stone-200">{{ destination.tagline }}</p></div>
-</section>
-<div class="container-x grid gap-10 py-14 lg:grid-cols-[1fr_320px]">
-  <div class="space-y-10">
-    <p class="text-lg text-stone-700">{{ destination.summary }}</p>
-    <div class="grid gap-8 sm:grid-cols-2">
-      <section><h2 class="text-2xl font-bold">Highlights</h2><ul class="mt-3 list-disc space-y-2 pl-5 text-stone-700">{% for h in destination.highlights %}<li>{{ h }}</li>{% endfor %}</ul></section>
-      <section><h2 class="text-2xl font-bold">Wildlife</h2><ul class="mt-3 list-disc space-y-2 pl-5 text-stone-700">{% for w in destination.wildlife %}<li>{{ w }}</li>{% endfor %}</ul></section>
+{% call heroSlides(slides, words, 'Experience') %}
+  <nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / <a href="/{{ lang }}/destinations">Destinations</a> / {{ destination.name }}</nav>
+  <p class="eyebrow mt-4">{{ destination.region }}</p>
+  <h1 class="mt-2 max-w-3xl text-4xl font-bold sm:text-6xl" data-scramble>{{ destination.name }}</h1>
+  <p class="mt-3 text-xl text-stone-200">{{ destination.tagline }}</p>
+  {% if tripCount %}<p class="mt-3 text-lg">{{ tripCount }} {{ 'trip' if tripCount == 1 else 'trips' }}{% if fromPrice %} · from <b class="text-sand">{{ fromPrice | money }}</b> <small class="text-sm text-stone-300">per person</small>{% endif %}</p>{% endif %}
+{% endcall %}
+
+<nav class="sticky top-[88px] z-30 border-b bg-white text-sm" aria-label="Page sections"><div class="container-x flex gap-5 overflow-x-auto py-3">
+  <a class="whitespace-nowrap font-medium hover:text-sand" href="#overview">Overview</a>
+  <a class="whitespace-nowrap font-medium hover:text-sand" href="#highlights">Highlights</a>
+  <a class="whitespace-nowrap font-medium hover:text-sand" href="#best-time">Best time</a>
+  {% if guide %}<a class="whitespace-nowrap font-medium hover:text-sand" href="#guide">Full guide ({{ guide.minutes }} min)</a>{% endif %}
+  <a class="whitespace-nowrap font-medium hover:text-sand" href="#stays">Where to stay</a>
+  <a class="whitespace-nowrap font-medium hover:text-sand" href="#trips">Trips</a>
+</div></nav>
+
+<div class="container-x grid gap-8 py-8 lg:grid-cols-[1fr_320px]">
+  <div class="min-w-0 space-y-6">
+    <p id="overview" class="scroll-mt-40 text-lg text-stone-700">{{ destination.summary }}</p>
+    <div id="highlights" class="grid scroll-mt-40 gap-8 sm:grid-cols-2">
+      <section><h2 class="text-2xl font-bold">What are the highlights?</h2><ul class="mt-3 list-disc space-y-2 pl-5 text-stone-700">{% for h in destination.highlights %}<li>{{ h }}</li>{% endfor %}</ul></section>
+      <section><h2 class="text-2xl font-bold">What wildlife can you see?</h2><ul class="mt-3 list-disc space-y-2 pl-5 text-stone-700">{% for w in destination.wildlife %}<li>{{ w }}</li>{% endfor %}</ul></section>
     </div>
-    <section><h2 class="text-2xl font-bold">Best time to visit</h2><p class="mt-3 text-stone-700">{{ destination.bestTime }}</p></section>
-    <section><h2 class="text-2xl font-bold">Where to stay</h2><ul class="mt-3 space-y-2">{% for s in stays %}<li><a class="text-sand-dark underline" href="/{{ lang }}/accommodations/{{ s.slug }}">{{ s.name }}</a> <span class="text-sm text-stone-500">({{ s.type }})</span></li>{% endfor %}</ul></section>
+    <section id="best-time" class="scroll-mt-40"><h2 class="text-2xl font-bold">When is the best time to visit?</h2><p class="mt-3 text-stone-700">{{ destination.bestTime }}</p></section>
+    {% if guide %}
+    <details class="card p-5 lg:hidden"><summary class="cursor-pointer text-sm font-bold uppercase tracking-wider">In this guide</summary>
+      <ol class="mt-3 list-decimal space-y-2 pl-5 text-sm">{% for s in guide.toc %}<li><a class="inline-link" href="#{{ s.id }}">{{ s.title }}</a></li>{% endfor %}</ol></details>
+    <article id="guide" class="guide scroll-mt-40">{{ guide.html | safe }}</article>
+    {% endif %}
+    <section id="stays" class="scroll-mt-40"><h2 class="text-2xl font-bold">Where can you stay?</h2><ul class="mt-3 space-y-2">{% for s in stays %}<li><a class="text-sand-dark underline" href="/{{ lang }}/accommodations/{{ s.slug }}">{{ s.name }}</a> <span class="text-sm text-stone-500">({{ s.type }})</span></li>{% endfor %}</ul></section>
   </div>
-  <aside class="card h-fit p-6"><h2 class="font-serif text-xl font-bold">Visit {{ destination.name }}</h2><p class="mt-2 text-sm text-stone-600">Tell us your dates and we will build the trip around it.</p>
-    <a class="btn btn-primary mt-4 w-full" href="/{{ lang }}/plan-your-trip">Plan this trip</a></aside>
+  <aside class="h-fit space-y-4 lg:sticky lg:top-[148px] lg:max-h-[calc(100vh-164px)] lg:overflow-y-auto">
+    {% if guide %}<nav class="card hidden p-6 lg:block" aria-label="Guide contents"><h2 class="font-sans text-sm font-bold uppercase tracking-wider">In this guide</h2>
+      <ol class="toc mt-3">{% for s in guide.toc %}<li><a href="#{{ s.id }}">{{ s.title }}</a></li>{% endfor %}</ol></nav>{% endif %}
+    <div class="card p-6"><h2 class="font-serif text-xl font-bold">Visit {{ destination.name }}</h2><p class="mt-2 text-sm text-stone-600">Tell us your dates and we will build the trip around it.</p>
+    <a class="btn btn-primary mt-4 w-full" href="/{{ lang }}/plan-your-trip">Plan this trip</a>
+    {% if guideLinks.length %}<h3 class="mt-6 font-sans text-sm font-bold uppercase tracking-wider">Park guides</h3>
+    <ul class="mt-2 space-y-1 text-sm">{% for g in guideLinks %}{% if g.slug != destination.slug %}<li><a class="text-sand-dark hover:underline" href="/{{ lang }}/destinations/{{ g.slug }}">{{ g.name }}</a></li>{% endif %}{% endfor %}</ul>{% endif %}
+    <h3 class="mt-6 font-sans text-sm font-bold uppercase tracking-wider">Trips</h3>
+    <ul class="mt-2 space-y-1 text-sm"><li><a class="text-sand-dark hover:underline" href="/{{ lang }}/safaris">All safaris</a></li><li><a class="text-sand-dark hover:underline" href="/{{ lang }}/kilimanjaro">Kilimanjaro climbs and treks</a></li><li><a class="text-sand-dark hover:underline" href="/{{ lang }}/day-trips">Day trips</a></li></ul></div></aside>
 </div>
-<section class="section bg-white"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Trips including {{ destination.name }}</h2><div class="grid gap-6 md:grid-cols-3">{% for t in related %}{{ tourCard(t, lang) }}{% endfor %}</div></div></section>
-<section class="section"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">More destinations</h2><div class="grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in others %}{{ destCard(d, lang) }}{% endfor %}</div></div></section>
+<section id="trips" class="section scroll-mt-32 bg-white"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Which trips include {{ destination.name }}?</h2><div class="grid gap-6 md:grid-cols-3">{% for t in related %}{{ tourCard(t, lang) }}{% endfor %}</div></div></section>
+<section class="section"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Where else can you go?</h2><div class="grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in others %}{{ destCard(d, lang) }}{% endfor %}</div></div></section>
 {% endblock %}

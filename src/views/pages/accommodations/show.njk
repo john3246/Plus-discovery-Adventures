@@ -3,7 +3,7 @@
 {% block title %}{{ stay.name }} | {{ site.fullName }}{% endblock %}
 {% block content %}
 {{ pageHero(stay.name, stay.type ~ (' in ' ~ destination.name if destination else ''), stay.name) }}
-<div class="container-x grid gap-10 py-14 lg:grid-cols-[1.3fr_1fr]">
+<div class="container-x grid gap-8 py-8 lg:grid-cols-[1.3fr_1fr]">
   <img src="{{ stay.image | unsplash(1000, 700) }}" alt="{{ stay.name }}" class="w-full rounded-xl object-cover">
   <div><p class="text-stone-700">{{ stay.description }}</p>
     <h2 class="mt-6 text-2xl font-bold">Amenities</h2><ul class="mt-3 list-disc space-y-1 pl-5">{% for a in stay.amenities %}<li>{{ a }}</li>{% endfor %}</ul>

@@ -2,6 +2,8 @@ import nunjucks from 'nunjucks';
 import { readFileSync } from 'node:fs';
 import { unsplash } from '../data/images.js';
 import { site, mainNav } from '../data/site.js';
+import { destinations } from '../data/destinations.js';
+import { guides } from '../site/guides.js';
 
 const locales = {};
 for (const l of ['en']) {
@@ -22,6 +24,7 @@ export function setupNunjucks(app, viewsDir) {
   env.addGlobal('t', (lang, key) => lookup(lang, key));
   env.addGlobal('site', site);
   env.addGlobal('mainNav', mainNav);
+  env.addGlobal('parkGuides', destinations.filter((d) => guides[d.slug]).map((d) => ({ slug: d.slug, name: d.name })));
   env.addGlobal('isDev', process.env.NODE_ENV !== 'production');
   env.addGlobal('currentYear', new Date().getFullYear());
 }

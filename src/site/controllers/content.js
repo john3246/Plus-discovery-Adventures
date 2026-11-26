@@ -1,9 +1,12 @@
 // Page controllers for home, blog, gallery, search and static pages.
 import { getSnapshot } from '../store.js';
+import { createLinker } from '../internalLinks.js';
+import * as seo from '../seo.js';
+import { unsplash } from '../../data/images.js';
 import { whyUs, steps, tourStyles } from '../../data/site.js';
 
 function destinationStats(d, tours) {
-  const prices = tours.filter((t) => t.stops.includes(d.slug)).map((t) => t.price);
+  const prices = tours.filter((t) => t.stops.includes(d.slug)).map((t) => t.price).filter((p) => p != null);
   return { ...d, count: prices.length, from: prices.length ? Math.min(...prices) : null, to: prices.length ? Math.max(...prices) : null };
 }
 
@@ -35,12 +38,19 @@ export async function blogPostPage(req, res, next) {
   const { posts } = await getSnapshot();
   const post = posts.find((p) => p.slug === req.params.slug);
   if (!post) return next();
-  res.render('pages/blog/show.njk', { post, related: posts.filter((p) => p.slug !== post.slug).slice(0, 3) });
+  const path = `/${res.locals.lang}/blog/${post.slug}`;
+  res.locals.schemas.push(seo.articleSchema(post, path, unsplash(post.image, 1200, 630)),
+    seo.breadcrumbs([['Home', `/${res.locals.lang}`], ['Blog', `/${res.locals.lang}/blog`], [post.title, path]]));
+  res.render('pages/blog/show.njk', { link: createLinker(res.locals.lang), post, related: posts.filter((p) => p.slug !== post.slug).slice(0, 3) });
 }
 
 export const galleryPage = async (req, res) => res.render('pages/gallery.njk', { images: (await getSnapshot()).gallery });
 export const reviewsPage = async (req, res) => res.render('pages/reviews.njk', { reviews: (await getSnapshot()).reviews });
-export const faqsPage = async (req, res) => res.render('pages/faqs.njk', { faqs: (await getSnapshot()).faqs });
+export const faqsPage = async (req, res) => {
+  const { faqs } = await getSnapshot();
+  res.locals.schemas.push(seo.faqSchema(faqs.map(([question, answer]) => ({ question, answer }))));
+  res.render('pages/faqs.njk', { faqs });
+};
 export const aboutPage = (req, res) => res.render('pages/about.njk', { whyUs, steps });
 export const travelGuidePage = async (req, res) => {
   const { destinations, posts } = await getSnapshot();

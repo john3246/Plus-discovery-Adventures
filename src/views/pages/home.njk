@@ -1,5 +1,5 @@
 {% extends "layouts/public.njk" %}
-{% from "partials/macros.njk" import tourCard, destCard, stars, heading, whyUsPanel %}
+{% from "partials/macros.njk" import tourCard, destCard, stars, heading, whyUsPanel, fillCard %}
 {% from "partials/icons.njk" import icon %}
 
 {% block content %}
@@ -8,8 +8,7 @@
   <img src="{{ '1516426122078-c23e76319801' | unsplash(1920, 1000) }}" alt="Safari vehicle on the Tanzanian plains at sunset" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-60">
   <div class="container-x grid items-center gap-10 py-20 lg:grid-cols-[1.2fr_1fr] lg:py-28">
     <div>
-      <p class="eyebrow">Tanzania · Kilimanjaro · Zanzibar</p>
-      <h1 class="mt-3 text-4xl font-bold leading-tight sm:text-6xl">There is a world waiting for you in Tanzania</h1>
+      <h1 class="text-4xl font-bold leading-tight sm:text-6xl" data-scramble>There is a world waiting for you in Tanzania</h1>
       <p class="mt-5 max-w-xl text-lg text-stone-200">Tailor-made safaris, mountain climbs and beach holidays, planned by people who live here.</p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a class="btn btn-primary" href="/{{ lang }}/safaris">Come & discover it</a>
@@ -34,9 +33,9 @@
 </div></section>
 
 {# 3. Why choose us #}
-<section class="section">
+<section class="py-6">
   <div class="container-x">
-    {{ heading('Why choose us', 'Travel with people who know Tanzania', 'Six reasons guests book with us and come back.') }}
+    <div class="mb-6 text-center"><p class="eyebrow">Why choose us</p><h2 class="mt-1 text-2xl font-bold sm:text-3xl">Travel with people who know Tanzania</h2></div>
     {{ whyUsPanel(whyUs) }}
   </div>
 </section>
@@ -46,7 +45,7 @@
   <div class="container-x">
     {{ heading('Top packages', 'Popular safari tours in Tanzania', 'Our most-booked trips, with clear prices and real itineraries.') }}
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in featured %}{{ tourCard(t, lang) }}{% endfor %}</div>
-    <p class="mt-10 text-center"><a class="btn btn-outline" href="/{{ lang }}/tours">View all safari tours</a></p>
+    <p class="mt-5 text-center"><a class="btn btn-outline" href="/{{ lang }}/tours">View all safari tours</a></p>
   </div>
 </section>
 
@@ -54,11 +53,17 @@
 {% for s in styles %}
 <section class="section {{ 'bg-white' if loop.index0 is even }}">
   <div class="container-x">
-    <div class="mb-8 flex items-end justify-between gap-4">
+    <div class="mb-5 flex items-end justify-between gap-4">
       <div><p class="eyebrow">{{ s[1] }} safaris</p><h2 class="text-3xl font-bold">{{ s[2] }}</h2></div>
       <a href="/{{ lang }}/safaris?style={{ s[0] }}" class="shrink-0 text-sm font-semibold text-sand-dark hover:underline">View all →</a>
     </div>
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in byStyle[s[0]] %}{{ tourCard(t, lang) }}{% endfor %}</div>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in byStyle[s[0]] %}{{ tourCard(t, lang) }}{% endfor %}
+      {% if byStyle[s[0]] | length < 3 %}{# Fills the spare column so a short row has no gap #}
+      <div class="card flex min-h-64 flex-col items-center justify-center bg-cream p-8 text-center {{ 'lg:col-span-2' if byStyle[s[0]] | length == 1 }}">
+        <h3 class="text-2xl font-bold">Want a different {{ s[1] | lower }} safari?</h3>
+        <p class="mt-3 text-sm text-stone-600">Tell us your dates, group size and budget, and we will build the trip around you.</p>
+        <a class="btn btn-primary mt-5" href="/{{ lang }}/plan-your-trip">Plan my safari</a>
+      </div>{% endif %}</div>
   </div>
 </section>
 {% endfor %}
@@ -66,7 +71,7 @@
 {# 6. How it works #}
 <section class="section bg-ink text-white">
   <div class="container-x">
-    <div class="mx-auto mb-10 max-w-2xl text-center"><p class="eyebrow">How it works</p><h2 class="mt-2 text-3xl font-bold sm:text-4xl">From first message to first game drive</h2></div>
+    <div class="mx-auto mb-5 max-w-2xl text-center"><p class="eyebrow">How it works</p><h2 class="mt-2 text-3xl font-bold sm:text-4xl">From first message to first game drive</h2></div>
     <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       {% for s in steps %}<div class="text-center"><div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/20">{{ icon(s.icon, 'h-10 w-10') }}</div>
         <p class="mt-4 text-xs font-semibold uppercase tracking-widest text-sand">Step {{ loop.index }}</p><h3 class="mt-1 text-lg font-semibold">{{ s.title }}</h3><p class="mt-2 text-sm text-stone-300">{{ s.text }}</p></div>{% endfor %}
@@ -79,7 +84,7 @@
   <div class="container-x">
     {{ heading('Trekking', 'Ready for your next adventure?', 'Climb Africa\'s highest mountain on the route that suits you.') }}
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in climbs %}{{ tourCard(t, lang) }}{% endfor %}</div>
-    <p class="mt-10 text-center"><a class="btn btn-outline" href="/{{ lang }}/kilimanjaro">View all routes</a></p>
+    <p class="mt-5 text-center"><a class="btn btn-outline" href="/{{ lang }}/kilimanjaro">View all routes</a></p>
   </div>
 </section>
 
@@ -105,7 +110,7 @@
         </div>
       </article>{% endfor %}
     </div>
-    <div class="mt-14 grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in destinations %}{{ destCard(d, lang) }}{% endfor %}</div>
+    <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">{% for d in destinations %}{{ destCard(d, lang) }}{% endfor %}</div>
     <p class="mt-8 text-center"><a class="btn btn-outline" href="/{{ lang }}/destinations">All destinations</a></p>
   </div>
 </section>
@@ -115,18 +120,18 @@
   <div class="container-x">
     {{ heading('Day trips', 'Day trips from Arusha', 'Short on time? See the wildlife in a day.') }}
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in dayTrips %}{{ tourCard(t, lang) }}{% endfor %}</div>
-    <p class="mt-10 text-center"><a class="btn btn-outline" href="/{{ lang }}/day-trips">View all day trips</a></p>
+    <p class="mt-5 text-center"><a class="btn btn-outline" href="/{{ lang }}/day-trips">View all day trips</a></p>
   </div>
 </section>
 <section class="section bg-white">
   <div class="container-x">
     {{ heading('Zanzibar', 'Finish with the beach', 'White sand, coral reefs and Stone Town.') }}
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in zanzibarTrips %}{{ tourCard(t, lang) }}{% endfor %}</div>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{% for t in zanzibarTrips %}{{ tourCard(t, lang) }}{% endfor %}{% if zanzibarTrips | length < 3 %}{{ fillCard(lang, 'Want a different Zanzibar holiday?', 'lg:col-span-2' if zanzibarTrips | length == 1 else '') }}{% endif %}</div>
   </div>
 </section>
 
 {# 10. Migration banner #}
-<section class="relative isolate bg-forest py-20 text-white">
+<section class="relative isolate bg-forest py-10 text-white">
   <img src="{{ '1564760055775-d63b17a55c44' | unsplash(1920, 800) }}" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-30" loading="lazy">
   <div class="container-x max-w-3xl text-center">
     <p class="eyebrow">Great Migration</p>
@@ -175,7 +180,7 @@
 </section>
 
 {# 14. CTA #}
-<section class="bg-sand py-14 text-center text-white">
+<section class="bg-sand py-8 text-center text-white">
   <div class="container-x"><h2 class="text-3xl font-bold">Ready for the ultimate Tanzanian adventure?</h2>
     <p class="mx-auto mt-2 max-w-xl">Tell us your dates and we will send a tailored proposal.</p>
     <a class="btn btn-dark mt-6" href="/{{ lang }}/plan-your-trip">Request a travel proposal</a></div>

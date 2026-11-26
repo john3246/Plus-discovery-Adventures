@@ -1,14 +1,20 @@
-<footer class="bg-ink text-stone-300">
-  <div class="container-x grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+<footer class="relative isolate overflow-hidden bg-ink text-stone-300">
+  <img src="/img/logo.png" alt="" aria-hidden="true" class="footer-logo-bg" width="513" height="253" loading="lazy">
+  <div class="container-x grid gap-8 py-8 sm:grid-cols-2 lg:grid-cols-5">
     <div>
-      <div class="inline-block rounded bg-white p-2"><img src="/img/logo.png" alt="{{ site.name }}" class="h-12 w-auto" width="150" height="62" loading="lazy"></div>
-      <p class="mt-4 text-sm">Tailor-made safaris, Kilimanjaro climbs and Zanzibar holidays, planned by local experts.</p>
+      <p class="text-sm">Tailor-made safaris, Kilimanjaro climbs and Zanzibar holidays, planned by local experts.</p>
     </div>
     <div>
       <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-white">Explore</h3>
       <ul class="mt-4 space-y-2 text-sm">
         {% for l in [['Safaris','/safaris'],['Kilimanjaro','/kilimanjaro'],['Day trips','/day-trips'],['Zanzibar','/zanzibar'],['Destinations','/destinations'],['Accommodation','/accommodations']] %}
         <li><a class="hover:text-sand" href="/{{ lang }}{{ l[1] }}">{{ l[0] }}</a></li>{% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-white">Park guides</h3>
+      <ul class="mt-4 space-y-2 text-sm">
+        {% for g in parkGuides %}<li><a class="hover:text-sand" href="/{{ lang }}/destinations/{{ g.slug }}">{{ g.name }} guide</a></li>{% endfor %}
       </ul>
     </div>
     <div>

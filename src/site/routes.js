@@ -3,6 +3,7 @@ import * as c from './controllers/catalog.js';
 import * as p from './controllers/content.js';
 import * as f from './controllers/forms.js';
 import { getSnapshot } from './store.js';
+import { seoLocals } from './seo.js';
 
 const LANGS = ['en'];
 export const siteRoutes = Router({ mergeParams: true });
@@ -16,6 +17,7 @@ siteRoutes.use(async (req, res, next) => {
   res.locals.langs = LANGS;
   return next();
 });
+siteRoutes.use(seoLocals);
 
 siteRoutes.get('/', p.homePage);
 for (const key of ['safaris', 'kilimanjaro', 'day-trips', 'zanzibar']) siteRoutes.get(`/${key}`, c.categoryPage(key));

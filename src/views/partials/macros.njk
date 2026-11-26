@@ -14,11 +14,12 @@
       <li class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">{{ t.tags[3] }}</li>
     </ul>
     <h3 class="mt-4 font-serif text-xl font-bold leading-snug"><a href="/{{ lang }}/tours/{{ t.slug }}" class="hover:text-sand-dark">{{ t.title }}</a></h3>
-    <p class="mt-3 flex items-center gap-2 text-sm"><span class="text-lg tracking-tight text-sand" aria-hidden="true">★★★★★</span><b>{{ t.rating }}/5</b><span class="text-stone-500">({{ t.reviews }} Reviews)</span></p>
-    <p class="mt-3 text-lg font-semibold text-sand-dark">$ {{ t.price | money | replace('$', '') }} <small class="text-sm font-normal text-stone-500">pp</small></p>
+    {% if t.rating %}<p class="mt-3 flex items-center gap-2 text-sm"><span class="text-lg tracking-tight text-sand" aria-hidden="true">★★★★★</span><b>{{ t.rating }}/5</b><span class="text-stone-500">({{ t.reviews }} Reviews)</span></p>{% endif %}
+    {% if t.price %}<p class="mt-3 text-lg font-semibold text-sand-dark">From $ {{ t.price | money | replace('$', '') }} <small class="text-sm font-normal text-stone-500">pp</small></p>
+    {% else %}<p class="mt-3 text-lg font-semibold text-sand-dark">Price on request</p>{% endif %}
     <p class="mt-3 flex items-center gap-2 text-sm text-stone-700">{{ icon('calendar', 'h-4 w-4') }}{{ t.days }} {{ 'Day' if t.days == 1 else 'Days' }}{% if t.nights %} - {{ t.nights }} {{ 'Night' if t.nights == 1 else 'Nights' }}{% endif %}</p>
-    <p class="mt-3 text-sm text-stone-700"><span class="font-medium">You Visit :</span>
-      {% for v in t.visit %}{{ v.name }}{% if v.mark == 'Start' %} <span class="text-emerald-600">(Start)</span>{% elif v.mark == 'End' %} <span class="text-red-600">(End)</span>{% endif %}{{ ', ' if not loop.last }}{% endfor %}</p>
+    {% if t.visit.length %}<p class="mt-3 text-sm text-stone-700"><span class="font-medium">You Visit :</span>
+      {% for v in t.visit %}{{ v.name }}{% if v.mark == 'Start' %} <span class="text-emerald-600">(Start)</span>{% elif v.mark == 'End' %} <span class="text-red-600">(End)</span>{% endif %}{{ ', ' if not loop.last }}{% endfor %}</p>{% endif %}
     <a href="/{{ lang }}/tours/{{ t.slug }}" class="btn btn-dark mt-auto w-full" style="margin-top:1.25rem">View trip</a>
   </div>
 </article>
@@ -35,22 +36,24 @@
 {% macro stars(n) %}<span class="text-sand" aria-label="{{ n }} out of 5">{{ '★★★★★'.slice(0, n) }}</span>{% endmacro %}
 
 {% macro heading(eyebrow, title, intro) %}
-<div class="mx-auto mb-10 max-w-2xl text-center">
+<div class="mx-auto mb-5 max-w-2xl text-center">
   <p class="eyebrow">{{ eyebrow }}</p>
   <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{{ title }}</h2>
   {% if intro %}<p class="mt-3 text-stone-600">{{ intro }}</p>{% endif %}
 </div>
 {% endmacro %}
 
-{# Why choose us: white panel, centred orange line icons, bold heading, short paragraph #}
+{# Why choose us: compact white panel, orange line icon beside each heading and short paragraph #}
 {% macro whyUsPanel(items) %}
-<div class="mx-auto max-w-6xl rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5 sm:p-12">
-  <div class="grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+<div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5 sm:p-8">
+  <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
     {% for w in items %}
-    <div class="flex flex-col items-center text-center">
-      {{ icon(w.icon, 'h-16 w-16') }}
-      <h3 class="mt-4 font-sans text-lg font-semibold">{{ w.title }}</h3>
-      <p class="mt-3 max-w-sm text-sm leading-relaxed text-stone-600">{{ w.text }}</p>
+    <div class="flex items-start gap-4">
+      <span class="shrink-0">{{ icon(w.icon, 'h-10 w-10') }}</span>
+      <div>
+        <h3 class="font-sans text-base font-semibold">{{ w.title }}</h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-600">{{ w.text }}</p>
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -66,8 +69,17 @@
 {% endmacro %}
 
 {% macro pageHero(title, sub, crumb) %}
-<section class="bg-ink py-14 text-white"><div class="container-x">
+<section class="bg-ink py-8 text-white"><div class="container-x">
   <nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / {{ crumb or title }}</nav>
   <h1 class="mt-2 text-4xl font-bold">{{ title }}</h1>{% if sub %}<p class="mt-2 max-w-2xl text-stone-300">{{ sub }}</p>{% endif %}
 </div></section>
+{% endmacro %}
+
+{# Takes the spare columns of a three-column row that has only one or two trips. span: classes for the width. #}
+{% macro fillCard(lang, title, span) %}
+<div class="card flex min-h-64 flex-col items-center justify-center bg-cream p-8 text-center ring-sand/30 {{ span }}">
+  <h3 class="text-2xl font-bold">{{ title }}</h3>
+  <p class="mt-3 max-w-sm text-sm text-stone-600">Tell us your dates, group size and budget, and we will build the trip around you.</p>
+  <a class="btn btn-primary mt-5" href="/{{ lang }}/plan-your-trip">Plan my trip</a>
+</div>
 {% endmacro %}

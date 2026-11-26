@@ -16,6 +16,6 @@
     <div class="hidden" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
     <div class="sm:col-span-2"><button class="btn btn-primary">Send booking request</button><p class="mt-2 text-xs text-stone-500">No payment is taken. We confirm availability first.</p></div>
   </form>
-  <aside class="card h-fit overflow-hidden"><img src="{{ tour.image | unsplash(640, 400) }}" alt="" class="aspect-[16/10] w-full object-cover"><div class="p-5"><h2 class="font-serif text-lg font-bold">{{ tour.title }}</h2><p class="mt-1 text-sm">{{ tour.days }} days · from {{ tour.price | money }} pp</p></div></aside>
+  <aside class="card h-fit overflow-hidden"><img src="{{ tour.image | unsplash(640, 400) }}" alt="" class="aspect-[16/10] w-full object-cover"><div class="p-5"><h2 class="font-serif text-lg font-bold">{{ tour.title }}</h2><p class="mt-1 text-sm">{{ tour.days }} days {% if tour.price %}· from {{ tour.price | money }} pp{% else %}· price on request{% endif %}</p></div></aside>
 </div></section>
 {% endblock %}

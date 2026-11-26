@@ -8,7 +8,7 @@
 </div>
 <header class="sticky top-0 z-40 border-b border-black/5 bg-white/95 backdrop-blur">
   <div class="container-x flex items-center justify-between py-3">
-    <a href="/{{ lang }}" aria-label="{{ site.fullName }} home"><img src="/img/logo.png" alt="{{ site.name }} {{ site.tagline }}" class="h-12 w-auto" width="150" height="62"></a>
+    <a href="/{{ lang }}" aria-label="{{ site.fullName }} home" class="logo-anim"><img src="/img/logo.png" alt="{{ site.name }} {{ site.tagline }}" class="h-12 w-auto" width="150" height="62"></a>
     <button id="nav-toggle" class="lg:hidden rounded border px-3 py-2 text-sm" aria-expanded="false" aria-controls="main-nav">Menu</button>
     <nav id="main-nav" class="hidden lg:flex items-center gap-1 absolute lg:static left-0 right-0 top-full bg-white lg:bg-transparent border-b lg:border-0 p-4 lg:p-0 flex-col lg:flex-row items-start lg:items-center" aria-label="Main">
       {% for item in mainNav %}

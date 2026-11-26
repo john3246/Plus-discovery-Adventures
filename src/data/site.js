@@ -1,3 +1,5 @@
+import { STYLE_FILTERS } from './filters.js';
+
 // Site-wide settings. Contact details are placeholders until the client supplies real ones.
 export const site = {
   name: '+Discovery',
@@ -34,7 +36,8 @@ export const tourStyles = [
 
 // url: route after /{lang}. key: i18n key in locales/*/common.json
 export const mainNav = [
-  { key: 'safaris', url: '/safaris', children: [['Camping', '/safaris?style=camping'], ['Mid-range', '/safaris?style=mid-range'], ['Luxury', '/safaris?style=luxury'], ['Great Migration', '/safaris?style=migration'], ['Honeymoon', '/safaris?style=honeymoon'], ['Joining safaris', '/safaris?style=joining']] },
+  { key: 'home', url: '' },
+  { key: 'safaris', url: '/safaris', children: STYLE_FILTERS.filter(([k]) => !['trek', 'beach', 'classic'].includes(k)).map(([k, label]) => [label, `/safaris?style=${k}`]) },
   { key: 'kilimanjaro', url: '/kilimanjaro' },
   { key: 'dayTrips', url: '/day-trips' },
   { key: 'zanzibar', url: '/zanzibar' },

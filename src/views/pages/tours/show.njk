@@ -1,7 +1,8 @@
 {% extends "layouts/public.njk" %}
 {% from "partials/macros.njk" import tourCard, stars %}
 {% block title %}{{ tour.title }} | {{ site.fullName }}{% endblock %}
-{% block description %}{{ tour.summary }}{% endblock %}
+{% block description %}{{ tour.summary | truncate(158) }}{% endblock %}
+{% block ogImage %}{{ tour.image | unsplash(1200, 630) }}{% endblock %}
 
 {% block content %}
 <section class="relative isolate bg-ink text-white">
@@ -10,7 +11,7 @@
     <nav class="text-xs text-stone-300"><a href="/{{ lang }}">Home</a> / <a href="/{{ lang }}/tours">Tours</a> / {{ tour.title }}</nav>
     <p class="eyebrow mt-4">{{ tour.style | titleCase }} · {{ tour.days }} day{{ '' if tour.days == 1 else 's' }}</p>
     <h1 class="mt-2 max-w-3xl text-4xl font-bold sm:text-5xl">{{ tour.title }}</h1>
-    <p class="mt-4 text-2xl">From <b class="text-sand">{{ tour.price | money }}</b> <small class="text-sm text-stone-300">per person</small></p>
+    <p class="mt-4 text-2xl">{% if tour.price %}From <b class="text-sand">{{ tour.price | money }}</b> <small class="text-sm text-stone-300">per person</small>{% else %}<b class="text-sand">Price on request</b>{% endif %}</p>
   </div>
 </section>
 
@@ -18,33 +19,41 @@
   {% for a in [['overview','Overview'],['itinerary','Itinerary'],['prices','Prices'],['included','Included'],['stays','Destinations'],['request','Request a quote']] %}<a class="whitespace-nowrap font-medium hover:text-sand" href="#{{ a[0] }}">{{ a[1] }}</a>{% endfor %}
 </div></nav>
 
-<div class="container-x grid gap-10 py-12 lg:grid-cols-[1fr_340px]">
-  <div class="space-y-14">
-    <section id="overview"><h2 class="text-2xl font-bold">Overview</h2><p class="mt-3 text-stone-700">{{ tour.summary }} Our planners adapt the route, pace and accommodation to your dates and budget.</p></section>
+<div class="container-x grid gap-8 py-8 lg:grid-cols-[1fr_340px]">
+  <div class="space-y-8">
+    <section id="overview"><h2 class="text-2xl font-bold">What is this trip about?</h2>
+      {% if tour.overview %}{% for p in tour.overview %}<p class="mt-3 leading-relaxed text-stone-700">{{ link(p) }}</p>{% endfor %}{% else %}<p class="mt-3 text-stone-700">{{ tour.summary }} Our planners adapt the route, pace and accommodation to your dates and budget.</p>{% endif %}
+      {% if tour.highlights and tour.highlights.length %}<h3 class="mt-6 text-lg font-semibold">What are the highlights?</h3><ul class="mt-2 grid gap-2 text-sm sm:grid-cols-2">{% for h in tour.highlights %}<li class="flex gap-2"><span class="text-forest">✓</span>{{ h }}</li>{% endfor %}</ul>{% endif %}
+      {% if tour.bestTime and tour.bestTime.length %}<h3 class="mt-6 text-lg font-semibold">When is the best time to go?</h3>{% for p in tour.bestTime %}<p class="mt-2 text-sm text-stone-700">{{ p }}</p>{% endfor %}{% endif %}</section>
 
-    <section id="itinerary"><h2 class="text-2xl font-bold">Day-by-day itinerary</h2>
-      <ol class="mt-5 space-y-4">{% for d in itinerary %}
+    <section id="itinerary"><h2 class="text-2xl font-bold">What happens each day?</h2>
+      {% if itinerary.length %}<ol class="mt-5 space-y-4">{% for d in itinerary %}
         <li class="card flex gap-4 p-5"><span class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-full bg-ink font-serif text-white"><small class="text-[9px] uppercase leading-none">Day</small><b class="leading-none">{{ d.day }}</b></span>
-          <div><h3 class="text-lg font-semibold">{{ d.title }}</h3><p class="mt-1 text-sm text-stone-600">{{ d.text }}</p></div></li>{% endfor %}</ol></section>
+          <div><h3 class="text-lg font-semibold">{{ d.title }}</h3>
+            {% if d.facts and d.facts.length %}<ul class="mt-2 flex flex-wrap gap-2 text-xs">{% for f in d.facts %}<li class="rounded-full bg-stone-100 px-3 py-1 text-stone-700">{{ f }}</li>{% endfor %}</ul>{% endif %}
+            {% if d.text is string %}<p class="mt-1 text-sm text-stone-600">{{ d.text }}</p>{% else %}{% for p in d.text %}<p class="mt-2 text-sm leading-relaxed text-stone-600">{{ link(p) }}</p>{% endfor %}{% endif %}
+            {% if d.stay or d.meals %}<p class="mt-3 text-xs text-stone-500">{% if d.stay %}<b>Overnight:</b> {{ d.stay }}{% endif %}{% if d.stay and d.meals %} · {% endif %}{% if d.meals %}<b>Meals:</b> {{ d.meals }}{% endif %}</p>{% endif %}</div></li>{% endfor %}</ol>
+      {% else %}<p class="mt-3 text-stone-700">We are finalising the day-by-day programme for this trip. <a class="text-sand-dark underline" href="/{{ lang }}/book/{{ tour.slug }}">Request it</a> and we will send the full itinerary and a price for your dates.</p>{% endif %}</section>
 
-    <section id="prices"><h2 class="text-2xl font-bold">Prices per person</h2>
-      <div class="mt-4 overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-ink text-white"><tr><th class="p-3">Group size</th><th class="p-3">Low season</th><th class="p-3">High season</th></tr></thead>
-        <tbody class="divide-y bg-white">
-          {% for g in [[2, 1.15, 1.35], [4, 1.0, 1.2], [6, 0.92, 1.1]] %}<tr><td class="p-3">{{ g[0] }} travellers</td><td class="p-3">{{ (tour.price * g[1]) | round | money }}</td><td class="p-3">{{ (tour.price * g[2]) | round | money }}</td></tr>{% endfor %}
-        </tbody></table></div>
-      <p class="mt-2 text-xs text-stone-500">Indicative sample prices. Excludes international flights.</p></section>
+    <section id="prices"><h2 class="text-2xl font-bold">How much does it cost per person?</h2>
+      {% if tour.tiers and tour.tiers.length %}
+      <div class="mt-4 overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-ink text-white"><tr><th class="p-3">Group size</th><th class="p-3">Price per person</th></tr></thead>
+        <tbody class="divide-y bg-white">{% for g in tour.tiers %}<tr><td class="p-3">{{ g[0] }} {{ 'climber' if g[0] == 1 else 'climbers' }}</td><td class="p-3">{{ g[1] | money }}</td></tr>{% endfor %}</tbody></table></div>
+      <p class="mt-2 text-xs text-stone-500">Prices in US dollars per person; the larger the group, the lower the price. Excludes international flights.</p>
+      {% elif tour.price %}<p class="mt-3 text-stone-700">{{ tour.price | money }} per person, based on two or more travellers sharing a private vehicle. Excludes international flights.</p>
+      {% else %}<p class="mt-3 text-stone-700">Price on request. Tell us your dates and group size and we will send a tailored quote.</p>{% endif %}</section>
 
     <section id="included" class="grid gap-6 sm:grid-cols-2">
-      <div><h2 class="text-2xl font-bold">Included</h2><ul class="mt-3 space-y-2 text-sm">{% for i in included %}<li class="flex gap-2"><span class="text-forest">✓</span>{{ i }}</li>{% endfor %}</ul></div>
-      <div><h2 class="text-2xl font-bold">Not included</h2><ul class="mt-3 space-y-2 text-sm">{% for i in excluded %}<li class="flex gap-2"><span class="text-red-700">✕</span>{{ i }}</li>{% endfor %}</ul></div>
+      <div><h2 class="text-2xl font-bold">What is included?</h2><ul class="mt-3 space-y-2 text-sm">{% for i in included %}<li class="flex gap-2"><span class="text-forest">✓</span>{{ i }}</li>{% endfor %}</ul></div>
+      <div><h2 class="text-2xl font-bold">What is not included?</h2><ul class="mt-3 space-y-2 text-sm">{% for i in excluded %}<li class="flex gap-2"><span class="text-red-700">✕</span>{{ i }}</li>{% endfor %}</ul></div>
     </section>
 
-    <section id="stays"><h2 class="text-2xl font-bold">Where you will go</h2>
-      <div class="mt-4 grid gap-4 sm:grid-cols-2">{% for d in stops %}<a href="/{{ lang }}/destinations/{{ d.slug }}" class="card flex gap-4 p-3"><img src="{{ d.image | unsplash(160, 160) }}" alt="" loading="lazy" class="h-20 w-20 rounded-lg object-cover"><div><h3 class="font-semibold">{{ d.name }}</h3><p class="text-sm text-stone-600">{{ d.tagline }}</p></div></a>{% endfor %}</div></section>
+    {% if stops.length %}<section id="stays"><h2 class="text-2xl font-bold">Where will you go?</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">{% for d in stops %}<a href="/{{ lang }}/destinations/{{ d.slug }}" class="card flex gap-4 p-3"><img src="{{ d.image | unsplash(160, 160) }}" alt="" loading="lazy" class="h-20 w-20 rounded-lg object-cover"><div><h3 class="font-semibold">{{ d.name }}</h3><p class="text-sm text-stone-600">{{ d.tagline }}</p></div></a>{% endfor %}</div></section>{% endif %}
   </div>
 
   <aside id="request" class="h-fit space-y-4 lg:sticky lg:top-40">
-    <div class="card p-6"><p class="text-sm text-stone-500">From</p><p class="text-3xl font-bold text-sand-dark">{{ tour.price | money }} <small class="text-sm font-normal text-stone-500">pp</small></p>
+    <div class="card p-6">{% if tour.price %}<p class="text-sm text-stone-500">From</p><p class="text-3xl font-bold text-sand-dark">{{ tour.price | money }} <small class="text-sm font-normal text-stone-500">pp</small></p>{% else %}<p class="text-2xl font-bold text-sand-dark">Price on request</p>{% endif %}
       <a href="/{{ lang }}/book/{{ tour.slug }}" class="btn btn-primary mt-4 w-full">Request this trip</a>
       <a href="/{{ lang }}/plan-your-trip" class="btn btn-outline mt-2 w-full">Customise it</a>
       <p class="mt-4 text-xs text-stone-500">No payment now. We reply with a tailored proposal.</p></div>
@@ -52,6 +61,12 @@
   </aside>
 </div>
 
-<section class="section bg-white"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Similar trips</h2>
+<section class="border-t border-black/5 py-6"><div class="container-x grid gap-8 md:grid-cols-3">
+  {% if guideStops.length %}<div><h2 class="text-xl font-bold">Park guides for this trip</h2><ul class="mt-3 space-y-2 text-sm">{% for g in parkGuides %}{% if g.slug in guideStops %}<li><a class="inline-link" href="/{{ lang }}/destinations/{{ g.slug }}">{{ g.name }} guide</a></li>{% endif %}{% endfor %}</ul></div>{% endif %}
+  {% if reading.length %}<div><h2 class="text-xl font-bold">Read before you go</h2><ul class="mt-3 space-y-2 text-sm">{% for a in reading %}<li><a class="inline-link" href="/{{ lang }}/blog/{{ a.slug }}">{{ a.title }}</a></li>{% endfor %}</ul></div>{% endif %}
+  <div><h2 class="text-xl font-bold">Plan your trip</h2><ul class="mt-3 space-y-2 text-sm"><li><a class="inline-link" href="/{{ lang }}/{{ 'kilimanjaro' if tour.category == 'kilimanjaro' else 'safaris' }}">{{ 'All Kilimanjaro climbs and treks' if tour.category == 'kilimanjaro' else 'All Tanzania safaris' }}</a></li><li><a class="inline-link" href="/{{ lang }}/faqs">Frequently asked questions</a></li><li><a class="inline-link" href="/{{ lang }}/plan-your-trip">Ask for a tailored itinerary</a></li></ul></div>
+</div></section>
+
+<section class="section bg-white"><div class="container-x"><h2 class="mb-6 text-2xl font-bold">Which similar trips can you take?</h2>
   <div class="grid gap-6 md:grid-cols-3">{% for t in related %}{{ tourCard(t, lang) }}{% endfor %}</div></div></section>
 {% endblock %}

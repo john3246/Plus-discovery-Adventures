@@ -1,0 +1,19 @@
+{# Full-width slideshow hero. slides: [{image, alt, label?, url?}]. words: phrases typed one after another.
+   When slides carry a label, the changing word follows the picture instead. Page text goes in the caller block. #}
+{% macro heroSlides(slides, words, lead) %}
+<section class="hero-slides" data-hero aria-roledescription="carousel">
+  {% for s in slides %}<img data-slide {% if s.label %}data-label="{{ s.label }}" data-url="{{ s.url }}"{% endif %} src="{{ s.image | unsplash(1920, 900) }}" alt="{{ s.alt }}" class="{{ 'is-active' if loop.first }}" {{ 'fetchpriority=high' if loop.first else 'loading=lazy' }}>
+  {% endfor %}
+  <div class="hero-shade"></div>
+  <div class="container-x hero-body">
+    {{ caller() }}
+    {% if words | length %}<p class="hero-words">{{ lead }} <a data-word {% if slides[0].url %}href="{{ slides[0].url }}"{% endif %} aria-hidden="true" data-words="{{ words | join('|') }}">{{ words[0] }}</a><span class="sr-only">{{ words | join(', ') }}</span></p>{% endif %}
+    <div class="mt-6 flex items-center gap-2">
+      <button type="button" class="hero-button" data-prev aria-label="Previous photo">‹</button>
+      <button type="button" class="hero-button" data-pause aria-label="Pause slideshow" aria-pressed="false">❚❚</button>
+      <button type="button" class="hero-button" data-next aria-label="Next photo">›</button>
+      <span class="ml-2 flex gap-1.5" data-dots></span>
+    </div>
+  </div>
+</section>
+{% endmacro %}

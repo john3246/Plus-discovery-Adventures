@@ -53,6 +53,7 @@ export async function getSnapshot() {
 }
 
 export async function getItinerary(tour) {
+  if (tour.itinerary) return tour.itinerary;
   if (pool && tour.id) {
     const { rows } = await pool.query('SELECT day_number AS day, title, description AS text FROM itinerary_days WHERE tour_id = $1 ORDER BY day_number', [tour.id]);
     if (rows.length) return rows;

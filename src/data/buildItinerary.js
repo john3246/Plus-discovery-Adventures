@@ -17,4 +17,6 @@ export function buildItinerary(tour) {
 }
 
 export const INCLUDED = ['Park and conservation fees', 'Accommodation as described', 'Meals as stated', 'Driver-guide and 4x4 vehicle', 'Airport transfers', 'Bottled water on game drives'];
+export const INCLUDED_TREK = ['Mountain accommodation (huts or camping, as described)', 'Airport pick-up and drop-off', 'All park entrance fees', 'Professional English-speaking mountain guide and chef', 'Porters', 'Meals as per the itinerary', 'Mineral water', 'Camping equipment: tent, mattress, mess tent, table and chairs', 'All government taxes'];
+export const EXCLUDED_TREK = ['International and internal flights', 'Personal items: souvenirs, travel insurance, visa fees', 'Tips for the mountain crew', 'Sleeping bag and trekking equipment (rental available on request)', 'Rescue fees', 'Any increase in government park fees'];
 export const EXCLUDED = ['International flights', 'Visas', 'Travel insurance', 'Tips', 'Personal items'];

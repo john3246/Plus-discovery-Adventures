@@ -27,7 +27,116 @@
   .field { @apply w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm focus:border-sand focus:outline-none focus:ring-1 focus:ring-sand; }
   .label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-stone-600; }
   .card { @apply overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-lg; }
-  .section { @apply py-14 sm:py-20; }
+  .section { @apply py-6 sm:py-8; }
   .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.2em] text-sand; }
   .error { @apply mt-1 text-xs text-red-700; }
+}
+
+/* Links inside body text */
+@layer components {
+  .inline-link { @apply text-sand-dark underline decoration-sand/40 underline-offset-2 hover:decoration-sand; }
+}
+
+/* Long-form destination guides */
+@layer base {
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+}
+
+@layer components {
+  .guide { @apply text-[1.02rem] text-stone-700; overflow-wrap: anywhere; }
+  .guide > p, .guide > ul, .guide > details, .guide > h3, .guide > h4 { max-width: 72ch; }
+  .guide h2 { @apply mt-8 mb-3 border-t border-black/10 pt-5 text-2xl font-bold leading-tight text-ink sm:text-3xl; scroll-margin-top: 150px; }
+  .guide h2:first-child { @apply mt-0 border-0 pt-0; }
+  .guide h2::before { content: ""; @apply mb-3 block h-1 w-12 rounded bg-sand; }
+  .guide h2 + p { @apply text-lg text-stone-800; }
+  .guide h3 { @apply mt-9 mb-2 text-xl font-bold leading-snug text-ink; scroll-margin-top: 150px; }
+  .guide h4, .guide h5 { @apply mt-6 mb-2 font-sans text-base font-semibold text-ink; }
+  .guide p { @apply mt-4 leading-[1.75]; }
+  .guide ul { @apply mt-4 list-disc space-y-2 pl-5 leading-relaxed marker:text-sand; }
+  .guide strong { @apply font-semibold text-ink; }
+  .guide a { @apply text-sand-dark underline decoration-sand/40 underline-offset-2 hover:decoration-sand; }
+  .guide .list-label { @apply mt-5 text-xs font-semibold uppercase tracking-wider text-stone-500; }
+  .guide .list-label + ul { @apply mt-2; }
+  .guide .note { @apply rounded-r-lg border-l-4 border-sand bg-white p-4 text-sm; }
+  .guide .faq { @apply mt-3 rounded-xl bg-white p-4 ring-1 ring-black/5 sm:p-5; }
+  .guide .faq summary { @apply cursor-pointer font-semibold text-ink; }
+  .guide .faq[open] summary { @apply mb-1; }
+  .guide-table { @apply mt-5 overflow-x-auto rounded-xl bg-white ring-1 ring-black/10; }
+  .guide-table table { @apply w-full text-left text-sm; overflow-wrap: normal; }
+  .guide-table th { @apply min-w-32 bg-ink p-3 align-bottom font-semibold text-white; }
+  .guide-table td { @apply border-t border-black/10 p-3 align-top; }
+  .guide-table tbody tr:nth-child(even) { @apply bg-stone-50; }
+  .guide-table ul { @apply mt-0 space-y-1 pl-4; }
+
+  .toc { @apply space-y-1 border-l border-black/10 text-sm; }
+  .toc a { @apply -ml-px block border-l-2 border-transparent py-1 pl-3 text-stone-600 hover:text-sand-dark; }
+  .toc a[aria-current="true"] { @apply border-sand font-semibold text-ink; }
+}
+
+/* Header logo: settles in on load, then a gold light sweeps across the black artwork every few seconds.
+   The logo file has a white background; "screen" blending leaves white untouched, so only the artwork glows. */
+@layer components {
+  .logo-anim { @apply relative inline-block overflow-hidden transition-transform duration-300 hover:scale-110; isolation: isolate; animation: logo-in 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+  .logo-anim::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent 38%, #e0a03a 47%, #f2c166 50%, #e0a03a 53%, transparent 62%) no-repeat;
+    background-size: 300% 100%; background-position: 120% 0;
+    animation: logo-shine 4.5s ease-in-out 1s infinite;
+  }
+  .logo-anim:hover::after { animation-duration: 1.4s; animation-delay: 0s; }
+}
+
+@keyframes logo-in { from { opacity: 0; transform: translateX(-24px) scale(0.85); } to { opacity: 1; transform: none; } }
+@keyframes logo-shine { 0% { background-position: 120% 0; } 45%, 100% { background-position: -20% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-anim, .logo-anim::after { animation: none; }
+  .logo-anim::after { display: none; }
+}
+
+/* Footer: the logo fills the background. */
+@layer components {
+  /* The logo file is black on white: inverting and "screen" blending leaves just a pale logo on the dark footer. */
+  .footer-logo-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: contain; padding: 1rem; filter: invert(1); mix-blend-mode: screen; opacity: 0.12; pointer-events: none; }
+}
+
+/* Slideshow hero used by the destination pages */
+@layer components {
+  .hero-slides { @apply relative isolate flex min-h-[30rem] items-end overflow-hidden bg-ink text-white sm:min-h-[36rem]; }
+  .hero-slides img[data-slide] { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity 1.2s ease, transform 6s ease; }
+  .hero-slides img[data-slide].is-active { opacity: 1; transform: scale(1); }
+  .hero-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, rgb(21 18 14 / 0.88), rgb(21 18 14 / 0.4) 60%, rgb(21 18 14 / 0.25)); }
+  .hero-body { @apply py-10; }
+  .hero-words { @apply mt-4 min-h-[4.5rem] font-serif text-2xl sm:min-h-10 sm:text-3xl; }
+  .hero-words a { @apply font-bold text-sand; }
+  .hero-button { @apply flex h-9 w-9 items-center justify-center rounded-full border border-white/50 text-sm hover:bg-white hover:text-ink; }
+  .hero-dot { @apply h-2.5 w-2.5 self-center rounded-full bg-white/40; }
+  .hero-dot[aria-current="true"] { @apply bg-sand; }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slides img[data-slide] { transition: none; transform: none; }
+}
+
+/* ScrambleText headlines: the invisible copy holds the space, the visible characters sit on top of it. */
+@layer components {
+  .scramble-word { position: relative; display: inline-block; white-space: nowrap; overflow-x: clip; }
+  .scramble-size { visibility: hidden; }
+  .scramble-show { position: absolute; top: 0; left: 0; }
+}
+
+/* Scroll animation (classes are added by public/js/reveal.js) */
+@layer utilities {
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) !important; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+}
+
+@media print { .reveal { opacity: 1; transform: none; } }
+
+/* Hide every scrollbar (page and inner panels). Scrolling still works by wheel, touch and keyboard. */
+@layer base {
+  * { scrollbar-width: none; }
+  *::-webkit-scrollbar { display: none; }
 }

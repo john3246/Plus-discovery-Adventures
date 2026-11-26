@@ -1,6 +1,7 @@
 {% extends "layouts/public.njk" %}
 {% from "partials/macros.njk" import pageHero %}
 {% block title %}Photo Gallery | {{ site.fullName }}{% endblock %}
+{% block description %}Photos of Tanzania wildlife, Kilimanjaro and Zanzibar beaches.{% endblock %}
 {% block content %}
 {{ pageHero('Gallery', 'Moments from the road.') }}
 <section class="section"><div class="container-x columns-2 gap-4 md:columns-3 lg:columns-4">{% for i in images %}<img src="{{ i | unsplash(600, 400 + (loop.index0 % 3) * 120) }}" alt="Tanzania travel photo {{ loop.index }}" loading="lazy" class="mb-4 w-full rounded-lg object-cover">{% endfor %}</div></section>
