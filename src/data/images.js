@@ -16,6 +16,8 @@ export const IMG = {
   zebras: '1503656142023-618e7d1f435a',
   island: '1559128010-7c1ad6e1b6a5',
   lodge: '1566073771259-6a8506099945',
+  // Zanzibar beach, 3992x2992, by Mulberry Digital on Unsplash (free under the Unsplash License)
+  zanzibarBeach: '1575999502951-4ab25b5ca889',
 };
 
 export function unsplash(id, w = 800, h = 600) {

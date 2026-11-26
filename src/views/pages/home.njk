@@ -5,7 +5,10 @@
 {% block content %}
 {# 1. Hero + planner #}
 <section class="relative isolate overflow-hidden bg-ink text-white">
-  <img src="{{ '1516426122078-c23e76319801' | unsplash(1920, 1000) }}" alt="Safari vehicle on the Tanzanian plains at sunset" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-60">
+  {# Sizes up to 4K (3840px): the browser picks the one that suits the screen, so phones stay fast. #}
+  {% set beach = '1575999502951-4ab25b5ca889' %}
+  <img src="{{ beach | unsplash(1920, 1080) }}" srcset="{{ beach | unsplash(960, 1200) }} 960w, {{ beach | unsplash(1920, 1080) }} 1920w, {{ beach | unsplash(2560, 1440) }} 2560w, {{ beach | unsplash(3840, 2160) }} 3840w" sizes="100vw" fetchpriority="high" alt="White sand beach, turquoise sea and palm trees in Zanzibar" class="absolute inset-0 -z-10 h-full w-full object-cover">
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink/80 via-ink/45 to-ink/10"></div>
   <div class="container-x grid items-center gap-10 py-20 lg:grid-cols-[1.2fr_1fr] lg:py-28">
     <div>
       <h1 class="text-4xl font-bold leading-tight sm:text-6xl" data-scramble>There is a world waiting for you in Tanzania</h1>
